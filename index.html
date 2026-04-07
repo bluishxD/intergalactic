@@ -353,7 +353,7 @@ body{background:#0a0a0a;font-family:'Special Elite',cursive;color:var(--bone);mi
       </div>
     </div>
     <div class="actions">
-      <button class="btn-act primary" onclick="downloadCert()">⬇ SAVE DEATH CERTIFICATE</button>
+
       <button class="btn-act" onclick="shareOnX()">𝕏 SHARE YOUR DEATH</button>
     </div>
     <div class="share-note">📸 Attach your certificate when posting — spread the grief</div>
@@ -371,6 +371,18 @@ body{background:#0a0a0a;font-family:'Special Elite',cursive;color:var(--bone);mi
   <div class="site-footer">
     <div class="footer-txt">BLOCKCHAIN BUREAU OF DEATHS · EST. BLOCK #0 · NOT FINANCIAL ADVICE · NOT MEDICAL ADVICE · NGMI</div>
   </div>
+</div>
+
+<div id="certificate-container" style="display:none">
+  <svg id="certificate" width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100%" height="100%" fill="#f5f0e2" />
+    <text x="50%" y="150" text-anchor="middle" font-size="48" font-family="Arial, sans-serif" fill="#333">
+      DEATH CERTIFICATE
+    </text>
+    <text x="50%" y="300" text-anchor="middle" font-size="36" font-family="Arial, sans-serif" fill="#555" id="username-text">
+      USERNAME
+    </text>
+  </svg>
 </div>
 
 <script>
@@ -851,13 +863,37 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'),4500);
 }
 
-async function downloadCert(){
-  try{
-    const canvas=await html2canvas(document.getElementById('certificate'),{scale:2,backgroundColor:'#f5f0e2',logging:false,useCORS:true});
-    const a=document.createElement('a');
-    a.download='DEATH_CERT_'+(window._lastM?.handle||'degen').toUpperCase()+'.png';
-    a.href=canvas.toDataURL('image/png');a.click();
-  }catch(e){alert('Screenshot manually — Cmd+Shift+4 or PrtScrn')}
+async function downloadCert() {
+  try {
+    const username = (window._lastM?.handle || 'degen').toUpperCase();
+    const usernameEl = document.getElementById('username-text');
+    usernameEl.textContent = username;
+
+    // temporarily show the certificate container
+    const certContainer = document.getElementById('certificate-container');
+    certContainer.style.display = 'block';
+
+    await document.fonts.ready;
+    await new Promise(r => setTimeout(r, 50));
+
+    const canvas = await html2canvas(document.getElementById('certificate'), {
+      scale: 2,
+      backgroundColor: '#f5f0e2',
+      logging: false,
+      useCORS: true,
+    });
+
+    const a = document.createElement('a');
+    a.download = 'DEATH_CERT_' + username + '.png';
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+
+    // hide it again
+    certContainer.style.display = 'none';
+  } catch (e) {
+    console.error(e);
+    alert('Screenshot manually — Cmd+Shift+4 or PrtScrn');
+  }
 }
 
 function shareOnX(){
