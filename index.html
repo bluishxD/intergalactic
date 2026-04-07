@@ -1,748 +1,867 @@
 
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Special+Elite&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Special+Elite&family=Creepster&family=Share+Tech+Mono&family=Oswald:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --space:#04000f;--deep:#060010;
-  --teal:#00ffcc;--purple:#bf00ff;--pink:#ff00aa;--blue:#4455ff;--gold:#ffcc00;
-  --paper:#f5f0e2;--ink:#150a00;--stamp-red:#cc1100;--stamp-blue:#220088;
-  --muted:rgba(220,180,255,0.45);--star:#eedeff;
+  --dirt:#1a0f05;--fog:#2a3a2a;--stone:#8a8a7a;--moss:#4a6a3a;
+  --blood:#8b0000;--gold:#c8a800;--bone:#e8dcc8;--sky:#0a0a1a;
+  --green:#00ff44;--purple:#8b00ff;
 }
-body{background:var(--deep);font-family:'Share Tech Mono',monospace;color:var(--star);overflow-x:hidden;cursor:crosshair;min-height:100vh}
-#bgCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
-.nebula{position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:
-    radial-gradient(ellipse 70% 50% at 15% 25%,rgba(120,0,200,0.28) 0%,transparent 65%),
-    radial-gradient(ellipse 60% 70% at 85% 75%,rgba(60,0,180,0.22) 0%,transparent 65%),
-    radial-gradient(ellipse 50% 40% at 50% 10%,rgba(180,0,255,0.14) 0%,transparent 60%),
-    radial-gradient(ellipse 80% 30% at 30% 90%,rgba(80,0,160,0.18) 0%,transparent 60%),
-    radial-gradient(ellipse 40% 60% at 70% 40%,rgba(0,60,200,0.12) 0%,transparent 55%);
-}
-.wrap{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:1.5rem 1rem 4rem}
-.site-header{text-align:center;padding:2rem 0 1.5rem}
-.agency-badge{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(191,0,255,0.4);background:rgba(191,0,255,0.06);padding:5px 16px;margin-bottom:1.25rem;font-size:9px;letter-spacing:0.3em;color:rgba(220,150,255,0.8);text-transform:uppercase}
-.agency-dot{width:6px;height:6px;border-radius:50%;background:var(--purple);animation:pdot 2s infinite;box-shadow:0 0 8px var(--purple)}
-@keyframes pdot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.6)}}
-.site-title{font-family:'Orbitron',sans-serif;font-size:2.4rem;font-weight:900;line-height:1.05;letter-spacing:0.04em;color:var(--star);text-shadow:0 0 30px rgba(191,0,255,0.3)}
-.site-title .g1{color:var(--purple);text-shadow:0 0 20px rgba(191,0,255,0.6),0 0 50px rgba(191,0,255,0.2)}
-.site-title .g2{color:var(--teal);text-shadow:0 0 20px rgba(0,255,204,0.5)}
-.dept-line{font-size:9px;color:var(--muted);letter-spacing:0.18em;margin-top:0.5rem;text-transform:uppercase}
-.site-sub{font-size:10px;color:rgba(220,180,255,0.4);margin-top:0.6rem;letter-spacing:0.08em;line-height:1.8}
-#ufo-wrap{position:relative;width:110px;height:110px;margin:1rem auto;cursor:pointer;user-select:none}
-#ufo-svg{width:110px;height:110px;filter:drop-shadow(0 0 12px rgba(191,0,255,0.5));transition:filter 0.3s}
-#ufo-wrap:hover #ufo-svg{filter:drop-shadow(0 0 24px rgba(0,255,204,0.8))}
-.ufo-hint{font-size:8px;color:rgba(220,180,255,0.4);letter-spacing:0.15em;text-align:center;margin-top:4px;animation:blink2 2s infinite}
-@keyframes blink2{0%,100%{opacity:0.4}50%{opacity:1}}
-@keyframes spin{to{transform:rotate(360deg)}}
-.hud-bar{display:flex;justify-content:center;gap:1.5rem;margin:0.75rem 0 1.5rem;flex-wrap:wrap}
-.hud-item{text-align:center;font-size:8px;letter-spacing:0.15em;color:rgba(220,180,255,0.4);padding:6px 12px;border:1px solid rgba(191,0,255,0.15);background:rgba(191,0,255,0.04)}
-.hud-val{font-family:'Orbitron',sans-serif;font-size:1rem;color:var(--purple);display:block;margin-bottom:2px;text-shadow:0 0 10px rgba(191,0,255,0.4)}
-.input-pod{background:rgba(191,0,255,0.04);border:1px solid rgba(191,0,255,0.25);padding:1.75rem;margin-bottom:1.5rem;position:relative;overflow:hidden}
-.input-pod::before{content:'';position:absolute;top:0;left:-100%;width:200%;height:1px;background:linear-gradient(90deg,transparent,rgba(191,0,255,0.6),var(--teal),rgba(191,0,255,0.6),transparent);animation:sweep 4s ease-in-out infinite}
-@keyframes sweep{0%{left:-100%}100%{left:100%}}
-.input-label{font-size:9px;letter-spacing:0.2em;color:rgba(191,0,255,0.8);text-transform:uppercase;margin-bottom:1rem;display:flex;align-items:center;gap:8px}
-.input-label::before{content:'▶';font-size:8px;color:var(--teal)}
-.inp-row{display:flex}
-.at-glyph{background:rgba(191,0,255,0.12);border:1px solid rgba(191,0,255,0.35);border-right:none;padding:0 1rem;display:flex;align-items:center;font-family:'Orbitron',sans-serif;font-size:1rem;color:var(--purple);text-shadow:0 0 8px var(--purple)}
-.handle-field{flex:1;background:rgba(4,0,15,0.7);border:1px solid rgba(191,0,255,0.35);border-right:none;outline:none;color:var(--star);font-family:'Share Tech Mono',monospace;font-size:1rem;padding:0.85rem 1rem;letter-spacing:0.08em}
-.handle-field::placeholder{color:rgba(220,180,255,0.2)}
-.handle-field:focus{border-color:var(--purple)}
-.btn-analyze{background:linear-gradient(135deg,var(--purple),var(--blue));border:none;color:#fff;font-family:'Orbitron',sans-serif;font-size:0.65rem;font-weight:700;padding:0 1.25rem;cursor:pointer;letter-spacing:0.1em;transition:all 0.2s;white-space:nowrap}
-.btn-analyze:hover{opacity:0.85;box-shadow:0 0 20px rgba(191,0,255,0.5)}
-.btn-analyze:active{transform:scale(0.97)}
-.btn-analyze:disabled{background:#1a0a2a;color:#442255;cursor:not-allowed}
-.examples-row{margin-top:0.75rem;font-size:9px;color:rgba(220,180,255,0.3)}
-.eg-btn{background:none;border:1px solid rgba(191,0,255,0.18);color:rgba(191,0,255,0.5);font-family:'Share Tech Mono',monospace;font-size:9px;padding:3px 10px;cursor:pointer;margin:0 4px 4px 0;transition:all 0.2s}
-.eg-btn:hover{border-color:var(--purple);color:var(--purple)}
-#loading{display:none;padding:2.5rem 0;text-align:center}
-.loading-orb{width:70px;height:70px;border-radius:50%;border:2px solid rgba(191,0,255,0.15);border-top-color:var(--purple);border-right-color:var(--teal);animation:spin 0.9s linear infinite;margin:0 auto 1.25rem;box-shadow:0 0 20px rgba(191,0,255,0.2)}
-.terminal-lines{text-align:left;font-size:10px;line-height:2.2;margin-top:1rem;max-width:440px;margin-inline:auto}
-.t-line{color:rgba(191,0,255,0.5);opacity:0;animation:appear 0.3s forwards}
-.t-line.done{color:rgba(0,255,204,0.9)}
-.t-line::before{content:'> ';color:var(--teal)}
-@keyframes appear{to{opacity:1}}
-.progress-wrap{margin-top:1.25rem;height:2px;background:rgba(191,0,255,0.1)}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--teal));width:0;transition:width 0.35s;box-shadow:0 0 8px var(--purple)}
-.tabs{display:flex;margin-bottom:1.5rem;border:1px solid rgba(191,0,255,0.25)}
-.tab-btn{flex:1;padding:0.6rem;background:transparent;border:none;color:rgba(220,180,255,0.4);font-family:'Orbitron',sans-serif;font-size:0.6rem;letter-spacing:0.1em;cursor:pointer;transition:all 0.2s;text-transform:uppercase}
-.tab-btn.active{background:rgba(191,0,255,0.12);color:var(--purple);text-shadow:0 0 8px var(--purple)}
-.tab-btn:hover:not(.active){background:rgba(191,0,255,0.06);color:rgba(220,180,255,0.7)}
-.tab-content{display:none}
-.tab-content.active{display:block}
-.lb-wrap{border:1px solid rgba(191,0,255,0.2);background:rgba(191,0,255,0.03);overflow:hidden}
-.lb-header{display:grid;grid-template-columns:40px 1fr 90px 90px;padding:8px 1rem;background:rgba(191,0,255,0.08);font-size:8px;letter-spacing:0.2em;color:rgba(220,180,255,0.5);text-transform:uppercase;border-bottom:1px solid rgba(191,0,255,0.2)}
-.lb-row{display:grid;grid-template-columns:40px 1fr 90px 90px;padding:10px 1rem;border-bottom:1px solid rgba(191,0,255,0.08);align-items:center}
-.lb-row:last-child{border-bottom:none}
-.lb-rank{font-family:'Orbitron',sans-serif;font-size:0.75rem;font-weight:700;color:rgba(220,180,255,0.3)}
-.lb-rank.gold{color:var(--gold);text-shadow:0 0 8px var(--gold)}
-.lb-rank.silver{color:#ccccdd}.lb-rank.bronze{color:#cc8844}
-.lb-handle{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--star)}
-.lb-handle small{display:block;font-size:8px;color:rgba(220,180,255,0.4);margin-top:1px}
-.lb-planet{font-size:8px;color:rgba(220,180,255,0.5);font-family:'Share Tech Mono',monospace}
-.lb-threat{font-family:'Orbitron',sans-serif;font-size:9px;font-weight:700;text-align:right}
-.t-LOW{color:#00cc66}.t-MEDIUM{color:#ffaa00}.t-HIGH{color:#ff4400}.t-CRITICAL{color:#ff0044;text-shadow:0 0 8px #ff0044}.t-OMEGA{color:var(--purple);text-shadow:0 0 12px var(--purple)}.t-CLASSIFIED{color:var(--teal);text-shadow:0 0 10px var(--teal)}
-.lb-empty{padding:2rem;text-align:center;font-size:10px;color:rgba(220,180,255,0.3)}
+html,body{width:100%;overflow-x:hidden}
+body{background:#0a0a0a;font-family:'Special Elite',cursive;color:var(--bone);min-height:100vh;cursor:crosshair}
 
-/* CERTIFICATE */
-.cert-outer-wrap{position:relative;margin-bottom:1rem}
-.cert-glow-ring{position:absolute;inset:-3px;z-index:0;border-radius:4px;background:linear-gradient(135deg,rgba(191,0,255,0.6),rgba(0,255,204,0.4),rgba(191,0,255,0.6));animation:certglow 3s ease-in-out infinite alternate}
-@keyframes certglow{0%{opacity:0.5}100%{opacity:1}}
-.certificate{background:var(--paper);color:var(--ink);position:relative;z-index:1;font-family:'Special Elite',cursive;overflow:hidden}
-.cert-b1{margin:14px;border:3px solid #7a5a20;padding:0}
-.cert-b2{margin:5px;border:1px solid #aa8a40;padding:0}
-.cert-b3{margin:5px;border:2px solid #7a5a20;padding:1.75rem 1.5rem 1.25rem;position:relative}
-.cert-corner{position:absolute;font-size:14px;line-height:1;color:#8a6a20}
-.cert-corner.tl{top:6px;left:6px}.cert-corner.tr{top:6px;right:6px}.cert-corner.bl{bottom:6px;left:6px}.cert-corner.br{bottom:6px;right:6px}
-.cert-header-strip{background:linear-gradient(135deg,#1a0a00,#3a1a00,#1a0a00);padding:0.6rem 1rem;margin:-1.75rem -1.5rem 1.25rem;display:flex;justify-content:space-between;align-items:center}
-.cert-header-logo{font-family:'Orbitron',sans-serif;font-size:0.65rem;font-weight:900;color:#ffcc66;letter-spacing:0.1em;line-height:1.5}
-.cert-header-logo span{color:#ff9900}
-.cert-case-meta{font-family:'Share Tech Mono',monospace;font-size:8px;color:#aa7733;text-align:right;line-height:1.8}
-.cert-emblem-row{display:flex;align-items:center;justify-content:center;gap:0.75rem;margin-bottom:1rem}
-.cert-hr{flex:1;height:1px}
-.cert-hr.l{background:linear-gradient(90deg,transparent,#c4a060)}
-.cert-hr.r{background:linear-gradient(90deg,#c4a060,transparent)}
-.cert-emblem{width:52px;height:52px;border-radius:50%;border:2px solid #8a6a20;background:linear-gradient(135deg,#1a0800,#3a1800);display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0}
-.cert-title-block{text-align:center}
-.cert-doc-type{font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:0.3em;color:#8a6a20;text-transform:uppercase;margin-bottom:3px}
-.cert-main-title{font-family:'Orbitron',sans-serif;font-size:1.1rem;font-weight:900;color:#1a0800;letter-spacing:0.04em;line-height:1.1}
-.cert-subtitle{font-size:7px;font-family:'Share Tech Mono',monospace;color:#8a6a20;letter-spacing:0.15em;margin-top:3px}
-.cert-subject{background:linear-gradient(135deg,#1a0800,#2a1200,#1a0800);border:2px solid #8a6a20;padding:0.75rem 1rem;margin-bottom:1.25rem;display:flex;justify-content:space-between;align-items:center}
-.cert-subject-label{font-size:7px;font-family:'Share Tech Mono',monospace;color:#aa7733;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:2px}
-.cert-subject-handle{font-family:'Orbitron',sans-serif;font-size:1.2rem;font-weight:900;color:#ffcc66;text-shadow:0 0 10px rgba(255,180,0,0.4)}
-.cert-subject-species{font-size:8px;font-family:'Share Tech Mono',monospace;color:#aa7733;font-style:italic;margin-top:2px}
-.cert-threat-val{font-family:'Orbitron',sans-serif;font-size:1rem;font-weight:700}
-.cert-secret-badge{background:#1a0800;border:1px solid #cc1100;padding:2px 6px;font-size:7px;font-family:'Share Tech Mono',monospace;color:#cc1100;letter-spacing:0.08em;margin-top:4px;display:inline-block}
-.cert-two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
-.cert-section{margin-bottom:1rem}
-.cert-section-head{font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:0.25em;text-transform:uppercase;color:#8a6a20;border-bottom:1px solid #c4a060;padding-bottom:3px;margin-bottom:8px}
+/* ═══ CEMETERY SCENE ═══ */
+#cemetery{position:relative;width:100%;height:420px;overflow:hidden;background:linear-gradient(180deg,#050510 0%,#0a0f0a 40%,#111a08 70%,#1a1205 100%)}
+
+/* Moon */
+#moon{position:absolute;top:30px;right:80px;width:70px;height:70px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fffde0,#e8d870 40%,#c8b840);box-shadow:0 0 40px rgba(255,240,100,0.4),0 0 80px rgba(255,240,100,0.15);animation:moonpulse 4s ease-in-out infinite}
+@keyframes moonpulse{0%,100%{box-shadow:0 0 40px rgba(255,240,100,0.4),0 0 80px rgba(255,240,100,0.15)}50%{box-shadow:0 0 60px rgba(255,240,100,0.6),0 0 120px rgba(255,240,100,0.25)}}
+
+/* Stars */
+.star{position:absolute;background:#fff;border-radius:50%;animation:twinkle var(--d,2s) ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:0.2}50%{opacity:1}}
+
+/* Fog layers */
+.fog{position:absolute;bottom:0;width:200%;height:120px;border-radius:50%;opacity:0.18;filter:blur(20px);animation:fogroll var(--fd,20s) linear infinite}
+@keyframes fogroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* Ground */
+#ground{position:absolute;bottom:0;left:0;right:0;height:100px;background:linear-gradient(180deg,#1a1205 0%,#251808 40%,#1a0f05 100%)}
+.grass-blade{position:absolute;bottom:95px;width:3px;background:linear-gradient(180deg,#2a4a1a,#1a2a0a);transform-origin:bottom center;animation:sway var(--sw,3s) ease-in-out infinite}
+@keyframes sway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+
+/* Background tombstones (decorative + secret) */
+.bg-stone{position:absolute;cursor:pointer;transition:filter 0.3s;user-select:none}
+.bg-stone:hover{filter:brightness(1.8) drop-shadow(0 0 8px #00ff44)}
+.bg-stone svg{display:block}
+.bg-stone .secret-name{display:none;position:absolute;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.95);border:1px solid var(--green);color:var(--green);font-family:'Share Tech Mono',monospace;font-size:9px;padding:4px 8px;white-space:nowrap;z-index:100;pointer-events:none}
+.bg-stone.revealed .secret-name{display:block}
+
+/* TREES */
+.tree{position:absolute;bottom:90px}
+.tree-trunk{width:12px;background:linear-gradient(90deg,#2a1a0a,#3a2a0a,#2a1a0a);margin:0 auto}
+.tree-top{border-radius:50% 50% 40% 40%;background:radial-gradient(circle at 40% 30%,#1a3a0a,#0a1a05)}
+
+/* ZOMBIES */
+.zombie{position:absolute;bottom:92px;animation:zombiewalk var(--zspd,18s) linear infinite}
+@keyframes zombiewalk{0%{transform:translateX(-80px) scaleX(1)}49%{transform:translateX(calc(100vw + 80px)) scaleX(1)}50%{transform:translateX(calc(100vw + 80px)) scaleX(-1)}100%{transform:translateX(-80px) scaleX(-1)}}
+.zombie svg{animation:zombiebob 0.5s ease-in-out infinite alternate}
+@keyframes zombiebob{0%{transform:translateY(0) rotate(-2deg)}100%{transform:translateY(-4px) rotate(2deg)}}
+
+/* Emerging zombie */
+.zombie-emerge{position:absolute;bottom:92px;animation:emerge 4s ease-out forwards}
+@keyframes emerge{0%{transform:translateY(60px);opacity:0}30%{opacity:1}100%{transform:translateY(0);opacity:1}}
+
+/* ═══ MAIN UI ═══ */
+.wrap{position:relative;z-index:10;max-width:760px;margin:0 auto;padding:0 1rem 4rem}
+
+/* Header */
+.site-header{text-align:center;padding:1.5rem 0 1rem;position:relative}
+.rip-title{font-family:'UnifrakturMaguntia',cursive;font-size:4rem;color:#cc2200;text-shadow:0 0 20px rgba(200,0,0,0.5),0 0 40px rgba(200,0,0,0.2);line-height:1;letter-spacing:0.05em}
+.rip-sub{font-family:'Creepster',cursive;font-size:1.1rem;color:#6a8a5a;letter-spacing:0.2em;margin-top:0.25rem}
+.rip-tagline{font-size:10px;color:rgba(200,180,150,0.4);letter-spacing:0.15em;margin-top:0.5rem;font-family:'Share Tech Mono',monospace}
+
+/* Input */
+.input-crypt{background:rgba(10,5,0,0.8);border:1px solid rgba(139,0,0,0.4);padding:1.5rem;margin:1rem 0;position:relative;overflow:hidden}
+.input-crypt::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#8b0000,transparent);animation:bleed 3s ease-in-out infinite}
+@keyframes bleed{0%,100%{opacity:0.3}50%{opacity:1}}
+.inp-label{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:0.25em;color:rgba(139,0,0,0.8);text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:8px}
+.inp-label::before{content:'☠';font-size:12px;color:#8b0000}
+.inp-row{display:flex}
+.at-skull{background:rgba(139,0,0,0.15);border:1px solid rgba(139,0,0,0.4);border-right:none;padding:0 1rem;display:flex;align-items:center;font-family:'Creepster',cursive;font-size:1.2rem;color:#8b0000}
+.handle-inp{flex:1;background:rgba(0,0,0,0.6);border:1px solid rgba(139,0,0,0.4);border-right:none;outline:none;color:var(--bone);font-family:'Special Elite',cursive;font-size:1rem;padding:0.8rem 1rem;letter-spacing:0.05em}
+.handle-inp::placeholder{color:rgba(200,180,150,0.2)}
+.handle-inp:focus{border-color:#8b0000}
+.btn-bury{background:linear-gradient(135deg,#8b0000,#5a0000);border:none;color:var(--bone);font-family:'Creepster',cursive;font-size:1.1rem;padding:0 1.5rem;cursor:pointer;letter-spacing:0.1em;transition:all 0.2s;white-space:nowrap}
+.btn-bury:hover{background:linear-gradient(135deg,#aa0000,#770000);box-shadow:0 0 20px rgba(139,0,0,0.5)}
+.btn-bury:disabled{background:#2a1a1a;color:#4a3a3a;cursor:not-allowed}
+.eg-row{margin-top:0.6rem;font-size:9px;color:rgba(200,180,150,0.3);font-family:'Share Tech Mono',monospace}
+.eg-btn{background:none;border:1px solid rgba(139,0,0,0.2);color:rgba(139,0,0,0.5);font-family:'Share Tech Mono',monospace;font-size:9px;padding:2px 8px;cursor:pointer;margin:0 3px 3px 0;transition:all 0.2s}
+.eg-btn:hover{border-color:#8b0000;color:#8b0000}
+
+/* Loading */
+#loading{display:none;text-align:center;padding:2rem 0}
+.shovel-wrap{font-size:2.5rem;animation:dig 0.6s ease-in-out infinite alternate;display:inline-block;margin-bottom:1rem}
+@keyframes dig{0%{transform:rotate(-20deg) translateY(0)}100%{transform:rotate(10deg) translateY(4px)}}
+.load-text{font-family:'Creepster',cursive;font-size:1rem;color:#8b0000;letter-spacing:0.2em;animation:flicker 0.3s infinite}
+@keyframes flicker{0%,100%{opacity:1}50%{opacity:0.7}}
+.load-steps{font-size:9px;color:rgba(200,180,150,0.4);font-family:'Share Tech Mono',monospace;margin-top:0.5rem;min-height:1.2em}
+
+/* ═══ DEATH CERTIFICATE ═══ */
+#cert-section{display:none;margin:1.5rem 0}
+
+.cert-glow{position:relative}
+.cert-glow::before{content:'';position:absolute;inset:-2px;background:linear-gradient(135deg,rgba(139,0,0,0.6),rgba(100,80,0,0.4),rgba(139,0,0,0.6));z-index:0;border-radius:2px;animation:certglow 3s ease-in-out infinite alternate}
+@keyframes certglow{0%{opacity:0.4}100%{opacity:1}}
+
+/* LANDSCAPE CERTIFICATE */
+.certificate{background:var(--bone);color:#1a0800;position:relative;z-index:1;overflow:hidden;font-family:'Special Elite',cursive}
+/* Aged texture */
+.certificate::after{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");pointer-events:none;z-index:6;mix-blend-mode:multiply}
+
+.cert-outer{margin:12px;border:3px solid #5a3a10;padding:0}
+.cert-mid{margin:4px;border:1px solid #8a6a20;padding:0}
+.cert-inner{margin:4px;border:2px solid #5a3a10;padding:1.25rem 1.5rem;position:relative}
+
+/* Blood drip top */
+.blood-drip{position:absolute;top:0;left:0;right:0;height:8px;background:repeating-linear-gradient(90deg,transparent 0px,transparent 20px,rgba(139,0,0,0.6) 20px,rgba(139,0,0,0.6) 22px,transparent 22px,transparent 30px);z-index:5}
+.blood-drop{position:absolute;top:0;width:4px;background:rgba(139,0,0,0.7);border-radius:0 0 50% 50%;animation:drip var(--dd,2s) ease-in infinite}
+@keyframes drip{0%{height:8px;opacity:0}50%{opacity:1}100%{height:30px;opacity:0}}
+
+/* HEADER STRIP */
+.cert-header{background:linear-gradient(135deg,#1a0800,#2a1000,#1a0800);padding:0.6rem 1.25rem;margin:-1.25rem -1.5rem 1rem;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:1rem}
+.cert-agency{font-family:'Creepster',cursive;font-size:0.85rem;color:#c8a800;letter-spacing:0.08em;line-height:1.4}
+.cert-agency span{color:#8b0000;font-size:0.7rem}
+.cert-skull-emblem{font-size:2.5rem;text-align:center}
+.cert-meta{font-family:'Share Tech Mono',monospace;font-size:8px;color:#8a6a20;text-align:right;line-height:1.8}
+
+/* TITLE ROW */
+.cert-title-row{display:flex;align-items:center;justify-content:center;gap:1rem;margin-bottom:1rem}
+.cert-divider{flex:1;height:1px}
+.cert-divider.l{background:linear-gradient(90deg,transparent,#8a6a20)}
+.cert-divider.r{background:linear-gradient(90deg,#8a6a20,transparent)}
+.cert-main-title{font-family:'UnifrakturMaguntia',cursive;font-size:1.8rem;color:#1a0800;text-align:center;line-height:1;white-space:nowrap}
+.cert-doc-type{font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:0.3em;color:#8a6a20;text-align:center;text-transform:uppercase;margin-bottom:2px}
+
+/* MAIN CONTENT — landscape grid */
+.cert-body{display:grid;grid-template-columns:1.1fr 1fr;gap:1rem;margin-bottom:0.75rem}
+
+/* LEFT: tombstone visual */
+.cert-stone-col{display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
+.cert-stone-svg{width:160px;height:200px;filter:drop-shadow(2px 4px 8px rgba(0,0,0,0.4))}
+.cert-handle-name{font-family:'UnifrakturMaguntia',cursive;font-size:1.3rem;color:#8b0000;text-align:center;margin-top:0.25rem;line-height:1.2}
+
+/* RIGHT: data */
+.cert-data-col{}
+.cert-section-head{font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:0.25em;text-transform:uppercase;color:#8a6a20;border-bottom:1px solid #c4a060;padding-bottom:2px;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.cert-section-head::before{content:'✝';color:#8b0000;font-size:8px}
 .cert-field{margin-bottom:5px}
-.cert-field-label{font-size:7px;font-family:'Share Tech Mono',monospace;color:#8a6a20;letter-spacing:0.1em}
+.cert-field-lbl{font-size:7px;font-family:'Share Tech Mono',monospace;color:#8a6a20;letter-spacing:0.1em;text-transform:uppercase}
 .cert-field-val{font-size:10px;color:#1a0800;line-height:1.4;font-family:'Special Elite',cursive}
-.diag-item{display:flex;gap:8px;margin-bottom:5px;align-items:flex-start}
-.diag-code{font-family:'Share Tech Mono',monospace;font-size:7px;color:#cc1100;white-space:nowrap;margin-top:1px;min-width:55px;background:#fff0e8;padding:1px 3px;border:1px solid #cc1100}
-.diag-name{font-size:9px;color:#1a0800;line-height:1.45;font-family:'Special Elite',cursive}
-.vital-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
-.vital-label{font-size:7px;font-family:'Share Tech Mono',monospace;color:#8a6a20;width:85px;flex-shrink:0}
-.vital-track{flex:1;height:5px;background:#e0d0b0}
-.vital-fill{height:100%}
-.vital-val{font-size:7px;font-family:'Share Tech Mono',monospace;color:#5a3a10;width:26px;text-align:right}
-.transmission-box{background:#f8f4e8;border-left:3px solid #8a6a20;padding:0.7rem 1rem;margin-bottom:1rem;font-size:9px;color:#1a0800;line-height:1.7;font-style:italic;font-family:'Special Elite',cursive}
-.transmission-label{font-family:'Share Tech Mono',monospace;font-size:7px;color:#8a6a20;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:5px;font-style:normal}
-.rx-block{background:#fffaf0;border:2px solid #8a6a20;padding:0.7rem 1rem 0.7rem 1.2rem;margin-bottom:1rem;position:relative}
-.rx-symbol{position:absolute;top:6px;right:10px;font-family:'Orbitron',sans-serif;font-size:1.8rem;color:#c4a060;opacity:0.3}
-.rx-items{list-style:none;padding:0}
-.rx-items li{font-size:9px;color:#1a0800;margin-bottom:3px;padding-left:1rem;position:relative;line-height:1.5;font-family:'Special Elite',cursive}
-.rx-items li::before{content:'—';position:absolute;left:0;color:#8a6a20}
-.stamps-row{display:flex;justify-content:space-between;align-items:flex-end;margin-top:1rem;padding-top:0.75rem;border-top:1px solid #c4a060}
-.cert-stamp{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center}
-.cert-stamp.red{border:3px solid var(--stamp-red);transform:rotate(-14deg)}
-.cert-stamp.blue{border:3px solid var(--stamp-blue);transform:rotate(9deg)}
-.cert-stamp.secret{border:3px solid #7700aa;transform:rotate(-5deg)}
-.stamp-txt{font-family:'Orbitron',sans-serif;font-size:6px;letter-spacing:0.04em;line-height:1.4}
-.stamp-txt.red{color:var(--stamp-red)}.stamp-txt.blue{color:var(--stamp-blue)}.stamp-txt.secret{color:#9900cc}
+.cert-field-val.blood{color:#8b0000;font-size:11px;font-weight:bold}
+
+/* EPITAPH BOX */
+.cert-epitaph{background:rgba(139,0,0,0.06);border:1px solid rgba(139,0,0,0.2);border-left:3px solid #8b0000;padding:0.6rem 0.75rem;font-style:italic;font-size:10px;color:#2a1000;line-height:1.7;margin-bottom:0.75rem;font-family:'Special Elite',cursive}
+.cert-epitaph-lbl{font-family:'Share Tech Mono',monospace;font-size:7px;color:#8a6a20;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:4px;font-style:normal;display:flex;align-items:center;gap:6px}
+.cert-epitaph-lbl::before{content:'✝';color:#8b0000}
+
+/* SCORE BAR */
+.cert-score-wrap{margin-bottom:0.75rem}
+.cert-score-label{font-family:'Share Tech Mono',monospace;font-size:7px;color:#8a6a20;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:4px}
+.cert-score-bar{height:12px;background:#d0c0a0;border:1px solid #8a6a20;position:relative;overflow:hidden}
+.cert-score-fill{height:100%;background:linear-gradient(90deg,#2a0000,#8b0000,#cc2200);transition:width 1s}
+.cert-score-val{position:absolute;right:4px;top:50%;transform:translateY(-50%);font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--bone)}
+
+/* BOTTOM ROW */
+.cert-bottom{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem;padding-top:0.75rem;border-top:1px solid #c4a060}
+.cert-stamp{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center}
+.cert-stamp.red{border:3px solid #8b0000;transform:rotate(-12deg)}
+.cert-stamp.black{border:3px solid #1a0800;transform:rotate(8deg)}
+.stamp-txt{font-family:'Creepster',cursive;font-size:7px;color:#8b0000;letter-spacing:0.04em;line-height:1.4}
+.stamp-txt.dark{color:#1a0800}
 .cert-sig-block{text-align:center}
-.cert-sig{font-family:'Special Elite',cursive;font-size:0.95rem;color:#1a0800;border-bottom:1px solid #8a6a20;padding-bottom:3px;margin-bottom:3px}
-.cert-sig-label{font-size:6px;font-family:'Share Tech Mono',monospace;color:#8a6a20;letter-spacing:0.06em}
-.cert-footer-note{font-family:'Share Tech Mono',monospace;font-size:6.5px;color:#8a6a20;line-height:1.6;padding:0.5rem 0;border-top:1px solid #c4a060;margin-top:0.5rem}
-.actions{display:flex;gap:0.75rem;margin-top:1.25rem;flex-wrap:wrap}
-.btn-action{flex:1;min-width:130px;padding:0.8rem 1rem;border:1px solid rgba(191,0,255,0.3);background:rgba(191,0,255,0.05);color:rgba(220,150,255,0.9);font-family:'Orbitron',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.1em;cursor:pointer;text-align:center;transition:all 0.2s;text-transform:uppercase}
-.btn-action:hover{background:rgba(191,0,255,0.12);border-color:var(--purple);color:var(--purple)}
-.btn-action.primary{background:linear-gradient(135deg,rgba(191,0,255,0.2),rgba(68,85,255,0.2));color:#fff;border-color:var(--purple)}
-.share-note{font-size:8px;color:rgba(220,180,255,0.3);text-align:center;margin-top:0.6rem;letter-spacing:0.1em}
-.btn-again{width:100%;margin-top:0.75rem;padding:0.75rem;border:1px solid rgba(220,180,255,0.15);background:transparent;color:rgba(220,180,255,0.4);font-family:'Share Tech Mono',monospace;font-size:9px;cursor:pointer;letter-spacing:0.1em;transition:all 0.2s}
-.btn-again:hover{color:var(--star);border-color:rgba(220,180,255,0.35)}
-.site-footer{text-align:center;padding:2rem 0 1rem;border-top:1px solid rgba(191,0,255,0.1);margin-top:2rem}
-.footer-stat{font-size:8px;color:rgba(191,0,255,0.35);letter-spacing:0.15em}
-.secret-toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(80,0,120,0.97);border:1px solid var(--purple);padding:12px 24px;font-family:'Orbitron',sans-serif;font-size:10px;color:#fff;letter-spacing:0.1em;z-index:9999;opacity:0;transition:opacity 0.4s;text-align:center;box-shadow:0 0 30px rgba(191,0,255,0.5);pointer-events:none}
+.cert-sig{font-family:'Special Elite',cursive;font-size:1rem;color:#1a0800;border-bottom:1px solid #8a6a20;padding-bottom:3px;margin-bottom:2px}
+.cert-sig-lbl{font-size:6px;font-family:'Share Tech Mono',monospace;color:#8a6a20;letter-spacing:0.06em}
+.cert-footer-note{font-family:'Share Tech Mono',monospace;font-size:6px;color:#8a6a20;line-height:1.6;padding-top:0.5rem;border-top:1px solid #c4a060;margin-top:0.5rem}
+
+/* Corner ornaments */
+.cert-corner{position:absolute;font-size:16px;color:#8a6a20;line-height:1}
+.cert-corner.tl{top:5px;left:5px}.cert-corner.tr{top:5px;right:5px}
+.cert-corner.bl{bottom:5px;left:5px}.cert-corner.br{bottom:5px;right:5px}
+
+/* ═══ ACTIONS ═══ */
+.actions{display:flex;gap:0.75rem;margin-top:1rem;flex-wrap:wrap}
+.btn-act{flex:1;min-width:120px;padding:0.75rem 1rem;border:1px solid rgba(139,0,0,0.4);background:rgba(139,0,0,0.08);color:rgba(200,180,150,0.8);font-family:'Creepster',cursive;font-size:0.9rem;letter-spacing:0.1em;cursor:pointer;text-align:center;transition:all 0.2s}
+.btn-act:hover{background:rgba(139,0,0,0.2);border-color:#8b0000;color:var(--bone)}
+.btn-act.primary{background:linear-gradient(135deg,rgba(139,0,0,0.3),rgba(90,0,0,0.3));color:var(--bone);border-color:#8b0000}
+.share-note{font-size:8px;color:rgba(200,180,150,0.3);text-align:center;margin-top:0.5rem;font-family:'Share Tech Mono',monospace;letter-spacing:0.1em}
+.btn-again{width:100%;margin-top:0.5rem;padding:0.65rem;border:1px solid rgba(200,180,150,0.15);background:transparent;color:rgba(200,180,150,0.35);font-family:'Special Elite',cursive;font-size:10px;cursor:pointer;transition:all 0.2s;letter-spacing:0.1em}
+.btn-again:hover{color:var(--bone);border-color:rgba(200,180,150,0.4)}
+
+/* ═══ LEADERBOARD ═══ */
+#leaderboard{margin-top:1.5rem}
+.lb-title{font-family:'UnifrakturMaguntia',cursive;font-size:1.8rem;color:#8b0000;text-align:center;margin-bottom:1rem;text-shadow:0 0 10px rgba(139,0,0,0.3)}
+.lb-wrap{border:1px solid rgba(139,0,0,0.3);background:rgba(10,5,0,0.6);overflow:hidden}
+.lb-head{display:grid;grid-template-columns:36px 1fr 120px 80px;padding:8px 1rem;background:rgba(139,0,0,0.12);font-size:8px;letter-spacing:0.2em;color:rgba(200,180,150,0.5);text-transform:uppercase;font-family:'Share Tech Mono',monospace;border-bottom:1px solid rgba(139,0,0,0.2)}
+.lb-row{display:grid;grid-template-columns:36px 1fr 120px 80px;padding:9px 1rem;border-bottom:1px solid rgba(139,0,0,0.08);align-items:center;transition:background 0.2s}
+.lb-row:hover{background:rgba(139,0,0,0.08)}
+.lb-row:last-child{border-bottom:none}
+.lb-rank{font-family:'Creepster',cursive;font-size:1rem;color:rgba(200,180,150,0.3)}
+.lb-rank.g{color:var(--gold);text-shadow:0 0 8px var(--gold)}
+.lb-rank.s{color:#aaa}
+.lb-rank.b{color:#cd7f32}
+.lb-handle{font-family:'Special Elite',cursive;font-size:11px;color:var(--bone)}
+.lb-handle small{display:block;font-size:8px;color:rgba(200,180,150,0.4);font-family:'Share Tech Mono',monospace;margin-top:1px}
+.lb-cause{font-size:8px;color:rgba(200,180,150,0.5);font-family:'Share Tech Mono',monospace}
+.lb-score{font-family:'Creepster',cursive;font-size:1rem;text-align:right;color:#8b0000}
+.lb-score.max{color:#ff2200;text-shadow:0 0 8px rgba(255,34,0,0.5)}
+.lb-empty{padding:2rem;text-align:center;font-size:10px;color:rgba(200,180,150,0.3);font-family:'Share Tech Mono',monospace}
+
+/* SECRET TOAST */
+.secret-toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:rgba(10,5,0,0.97);border:1px solid #8b0000;padding:10px 20px;font-family:'Creepster',cursive;font-size:14px;color:#cc2200;z-index:9999;opacity:0;transition:opacity 0.4s;text-align:center;box-shadow:0 0 30px rgba(139,0,0,0.5);pointer-events:none;white-space:nowrap}
 .secret-toast.show{opacity:1}
-@media(max-width:500px){
-  .site-title{font-size:1.7rem}
-  .cert-two-col{grid-template-columns:1fr}
-  .btn-analyze{padding:0 0.6rem;font-size:0.6rem}
-  .cert-b3{padding:1.25rem 0.85rem}
-  .lb-header,.lb-row{grid-template-columns:32px 1fr 70px}
-  .lb-planet{display:none}
+
+/* SITE FOOTER */
+.site-footer{text-align:center;padding:1.5rem 0 1rem;border-top:1px solid rgba(139,0,0,0.1);margin-top:2rem}
+.footer-txt{font-size:8px;color:rgba(200,180,150,0.25);font-family:'Share Tech Mono',monospace;letter-spacing:0.15em}
+
+/* HUD */
+.hud{display:flex;justify-content:center;gap:1.5rem;margin:0.5rem 0 1rem;flex-wrap:wrap}
+.hud-item{text-align:center;font-size:8px;letter-spacing:0.15em;color:rgba(200,180,150,0.35);font-family:'Share Tech Mono',monospace;padding:5px 12px;border:1px solid rgba(139,0,0,0.15);background:rgba(139,0,0,0.04)}
+.hud-val{font-family:'Creepster',cursive;font-size:1.1rem;color:#8b0000;display:block;margin-bottom:1px}
+
+@media(max-width:540px){
+  .rip-title{font-size:2.8rem}
+  .cert-body{grid-template-columns:1fr}
+  .cert-stone-col{display:none}
+  .lb-head,.lb-row{grid-template-columns:32px 1fr 70px}
+  .lb-cause{display:none}
+  .btn-bury{padding:0 0.75rem;font-size:1rem}
 }
 </style>
 
-<canvas id="bgCanvas"></canvas>
-<div class="nebula"></div>
 <div class="secret-toast" id="secret-toast"></div>
 
+<!-- ═══ CEMETERY SCENE ═══ -->
+<div id="cemetery">
+  <div id="moon"></div>
+  <canvas id="rainCanvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0.15"></canvas>
+  <div id="cemetery-inner" style="position:absolute;inset:0"></div>
+  <div id="ground"></div>
+</div>
+
+<!-- ═══ MAIN UI ═══ -->
 <div class="wrap">
-
-<div class="site-header">
-  <div class="agency-badge"><span class="agency-dot"></span>IGPB · INTERGALACTIC PSYCHIATRIC BUREAU · EST. 4.2 BILLION BC</div>
-  <div id="ufo-wrap">
-    <svg id="ufo-svg" viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <radialGradient id="ug1" cx="40%" cy="35%"><stop offset="0%" stop-color="#9955ff"/><stop offset="100%" stop-color="#4400aa"/></radialGradient>
-        <radialGradient id="ug2" cx="40%" cy="30%"><stop offset="0%" stop-color="#00ffcc" stop-opacity="0.9"/><stop offset="100%" stop-color="#006644" stop-opacity="0.6"/></radialGradient>
-        <filter id="uf"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-      </defs>
-      <polygon points="45,72 65,72 73,96 37,96" fill="rgba(0,255,204,0.10)"/>
-      <polygon points="46,73 64,73 70,90 40,90" fill="rgba(0,255,204,0.06)"/>
-      <ellipse cx="55" cy="68" rx="30" ry="8" fill="url(#ug1)" filter="url(#uf)"/>
-      <ellipse cx="55" cy="66" rx="28" ry="6" fill="#6633cc"/>
-      <ellipse cx="55" cy="60" rx="18" ry="12" fill="url(#ug2)" opacity="0.9"/>
-      <ellipse cx="50" cy="56" rx="5" ry="4" fill="rgba(255,255,255,0.3)"/>
-      <circle cx="34" cy="68" r="3" fill="#00ffcc" filter="url(#uf)" class="ufl"/>
-      <circle cx="44" cy="72" r="2.5" fill="#bf00ff" filter="url(#uf)" class="ufl"/>
-      <circle cx="55" cy="74" r="3" fill="#00ffcc" filter="url(#uf)" class="ufl"/>
-      <circle cx="66" cy="72" r="2.5" fill="#bf00ff" filter="url(#uf)" class="ufl"/>
-      <circle cx="76" cy="68" r="3" fill="#00ffcc" filter="url(#uf)" class="ufl"/>
-      <ellipse cx="55" cy="68" rx="30" ry="8" fill="none" stroke="rgba(0,255,204,0.25)" stroke-width="1"/>
-    </svg>
-  </div>
-  <div class="ufo-hint" id="ufo-hint">👆 click the UFO</div>
-  <div class="site-title">INTER<span class="g1">GALACTIC</span><br><span class="g2">PSYCHIATRIC</span> BUREAU</div>
-  <div class="dept-line">Department of Human Behavioral Anomalies · Andromeda Division</div>
-  <div class="site-sub">We have been observing your timeline for eons.<br>The diagnosis has been finalized.</div>
-</div>
-
-<div class="hud-bar">
-  <div class="hud-item"><span class="hud-val" id="hud-cases">0</span>CASES FILED</div>
-  <div class="hud-item"><span class="hud-val" id="hud-secret">0</span>SECRET SPECIES</div>
-  <div class="hud-item"><span class="hud-val" id="hud-threat">—</span>TOP THREAT</div>
-</div>
-
-<div class="input-pod">
-  <div class="input-label">Subject X Handle — Immediate Psychiatric Evaluation</div>
-  <div class="inp-row">
-    <div class="at-glyph">@</div>
-    <input type="text" class="handle-field" id="handle-inp" placeholder="yourhandle" maxlength="30" autocomplete="off" spellcheck="false">
-    <button class="btn-analyze" id="btn-go" onclick="beginEvaluation()">EVALUATE ▶</button>
-  </div>
-  <div class="examples-row" style="margin-top:0.6rem">Try:
-    <button class="eg-btn" onclick="fill('elonmusk')">@elonmusk</button>
-    <button class="eg-btn" onclick="fill('vitalikbuterin')">@vitalikbuterin</button>
-    <button class="eg-btn" onclick="fill('naval')">@naval</button>
-    <button class="eg-btn" onclick="fill('dril')">@dril</button>
-  </div>
-</div>
-
-<div id="loading">
-  <div class="loading-orb"></div>
-  <div style="font-size:9px;color:rgba(191,0,255,0.7);letter-spacing:0.2em">INITIATING DEEP SCAN...</div>
-  <div class="terminal-lines" id="terminal"></div>
-  <div class="progress-wrap"><div class="progress-fill" id="prog"></div></div>
-</div>
-
-<!-- TABS WRAPPER — always in DOM, visibility toggled -->
-<div id="results-area" style="display:none">
-  <div class="tabs">
-    <button class="tab-btn active" id="tab-btn-cert" onclick="switchTab('cert')">📋 CERTIFICATE</button>
-    <button class="tab-btn" id="tab-btn-board" onclick="switchTab('board')">🏆 THREAT BOARD</button>
+  <div class="site-header">
+    <div class="rip-title">☠ Crypto Tombstone ☠</div>
+    <div class="rip-sub">Your Blockchain Obituary Awaits</div>
+    <div class="rip-tagline">We buried your bags. Now we bury you.</div>
   </div>
 
-  <div class="tab-content active" id="tab-cert">
-    <div class="cert-outer-wrap">
-      <div class="cert-glow-ring"></div>
+  <div class="hud">
+    <div class="hud-item"><span class="hud-val" id="hud-buried">0</span>BURIED</div>
+    <div class="hud-item"><span class="hud-val" id="hud-avg">0</span>AVG PAIN SCORE</div>
+    <div class="hud-item"><span class="hud-val" id="hud-max">0</span>MOST PAINFUL DEATH</div>
+  </div>
+
+  <div class="input-crypt">
+    <div class="inp-label">Enter your X handle to receive your burial</div>
+    <div class="inp-row">
+      <div class="at-skull">@</div>
+      <input type="text" class="handle-inp" id="handle-inp" placeholder="yourhandle" maxlength="30" autocomplete="off" spellcheck="false">
+      <button class="btn-bury" id="btn-bury" onclick="beginBurial()">BURY ME ☠</button>
+    </div>
+    <div class="eg-row">Try:
+      <button class="eg-btn" onclick="fill('cryptopunk')">@cryptopunk</button>
+      <button class="eg-btn" onclick="fill('degod')">@degod</button>
+      <button class="eg-btn" onclick="fill('solana')">@solana</button>
+      <button class="eg-btn" onclick="fill('justbluish')">@justbluish</button>
+    </div>
+  </div>
+
+  <div id="loading">
+    <div class="shovel-wrap">⚰️</div>
+    <div class="load-text">DIGGING YOUR GRAVE...</div>
+    <div class="load-steps" id="load-step"></div>
+  </div>
+
+  <div id="cert-section">
+    <div class="cert-glow">
       <div class="certificate" id="certificate">
-        <div class="cert-b1"><div class="cert-b2"><div class="cert-b3">
-          <div class="cert-corner tl">✦</div><div class="cert-corner tr">✦</div>
-          <div class="cert-corner bl">✦</div><div class="cert-corner br">✦</div>
-
-          <div class="cert-header-strip">
-            <div class="cert-header-logo">INTERGALACTIC PSYCHIATRIC BUREAU<br><span>🛸 ANDROMEDA DIVISION</span></div>
-            <div style="font-size:1.4rem">🪐</div>
-            <div class="cert-case-meta" id="c-caseno"></div>
+        <div class="cert-outer"><div class="cert-mid"><div class="cert-inner">
+          <div class="cert-corner tl">✝</div><div class="cert-corner tr">✝</div>
+          <div class="cert-corner bl">☠</div><div class="cert-corner br">☠</div>
+          <div class="blood-drip">
+            <div class="blood-drop" style="left:15%;--dd:2.1s"></div>
+            <div class="blood-drop" style="left:35%;--dd:1.7s"></div>
+            <div class="blood-drop" style="left:55%;--dd:2.4s"></div>
+            <div class="blood-drop" style="left:75%;--dd:1.9s"></div>
+            <div class="blood-drop" style="left:88%;--dd:2.6s"></div>
           </div>
-
-          <div class="cert-emblem-row">
-            <div class="cert-hr l"></div>
-            <div class="cert-emblem">👽</div>
-            <div class="cert-title-block">
-              <div class="cert-doc-type">Official Classified Psychiatric File</div>
-              <div class="cert-main-title">POST-TRANSMISSION<br>DIAGNOSIS</div>
-              <div class="cert-subtitle">Homo Sapiens · Digital Subspecies · X Platform Variant</div>
-            </div>
-            <div class="cert-emblem">🌌</div>
-            <div class="cert-hr r"></div>
+          <div class="cert-header">
+            <div class="cert-agency">BLOCKCHAIN BUREAU OF DEATHS<br><span>☠ DEPARTMENT OF DEGENERATE AFFAIRS ☠</span></div>
+            <div class="cert-skull-emblem">💀</div>
+            <div class="cert-meta" id="c-meta"></div>
           </div>
-
-          <div class="cert-subject">
+          <div class="cert-title-row">
+            <div class="cert-divider l"></div>
             <div>
-              <div class="cert-subject-label">Subject Handle</div>
-              <div class="cert-subject-handle" id="c-handle"></div>
-              <div class="cert-subject-species" id="c-species"></div>
-              <div id="c-secret-badge"></div>
+              <div class="cert-doc-type">Official Death Certificate — Crypto Division</div>
+              <div class="cert-main-title">Certificate of Degenerate Demise</div>
             </div>
-            <div style="text-align:right">
-              <div class="cert-subject-label">Threat Level</div>
-              <div class="cert-threat-val" id="c-threat"></div>
-              <div style="font-size:7px;font-family:'Share Tech Mono',monospace;color:#aa7733;margin-top:3px" id="c-clearance"></div>
+            <div class="cert-divider r"></div>
+          </div>
+          <div class="cert-body">
+            <div class="cert-stone-col">
+              <svg class="cert-stone-svg" viewBox="0 0 160 200" xmlns="http://www.w3.org/2000/svg" id="cert-stone-svg">
+                <defs>
+                  <linearGradient id="sg1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#7a7a6a"/><stop offset="100%" stop-color="#5a5a4a"/></linearGradient>
+                  <linearGradient id="sg2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#4a6a3a"/><stop offset="100%" stop-color="#2a4a1a"/></linearGradient>
+                </defs>
+                <ellipse cx="80" cy="192" rx="55" ry="10" fill="rgba(0,0,0,0.4)"/>
+                <rect x="55" y="170" width="50" height="25" fill="url(#sg1)" rx="2"/>
+                <path d="M30,80 Q30,20 80,15 Q130,20 130,80 L130,175 Q80,185 30,175 Z" fill="url(#sg1)" stroke="#4a4a3a" stroke-width="1.5"/>
+                <path d="M35,85 Q35,28 80,23 Q125,28 125,85 L125,170 Q80,178 35,170 Z" fill="#6a6a5a" opacity="0.3"/>
+                <text x="80" y="65" text-anchor="middle" font-family="UnifrakturMaguntia,cursive" font-size="14" fill="#1a1a0a" id="c-stone-handle"></text>
+                <text x="80" y="82" text-anchor="middle" font-family="Special Elite,cursive" font-size="9" fill="#3a3a2a" id="c-stone-dates"></text>
+                <text x="80" y="96" text-anchor="middle" font-family="Special Elite,cursive" font-size="8" fill="#4a4a3a" id="c-stone-line1"></text>
+                <text x="80" y="108" text-anchor="middle" font-family="Special Elite,cursive" font-size="8" fill="#4a4a3a" id="c-stone-line2"></text>
+                <text x="80" y="120" text-anchor="middle" font-family="Special Elite,cursive" font-size="8" fill="#4a4a3a" id="c-stone-line3"></text>
+                <text x="80" y="136" text-anchor="middle" font-family="Creepster,cursive" font-size="11" fill="#5a0000" id="c-stone-rip"></text>
+                <path d="M45,148 Q80,154 115,148" stroke="url(#sg2)" stroke-width="2" fill="none" opacity="0.6"/>
+                <rect x="72" y="152" width="5" height="18" fill="url(#sg2)" rx="1"/>
+                <rect x="65" y="157" width="18" height="4" fill="url(#sg2)" rx="1"/>
+              </svg>
+              <div class="cert-handle-name" id="c-cert-handle"></div>
+            </div>
+            <div class="cert-data-col">
+              <div class="cert-epitaph" id="c-epitaph">
+                <div class="cert-epitaph-lbl">Final Epitaph</div>
+                <span id="c-epitaph-text"></span>
+              </div>
+              <div class="cert-section-head">Vital Statistics</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;margin-bottom:8px">
+                <div class="cert-field"><div class="cert-field-lbl">Cause of Death</div><div class="cert-field-val blood" id="c-cause"></div></div>
+                <div class="cert-field"><div class="cert-field-lbl">Time of Death</div><div class="cert-field-val" id="c-time"></div></div>
+                <div class="cert-field"><div class="cert-field-lbl">Last Holding</div><div class="cert-field-val" id="c-holding"></div></div>
+                <div class="cert-field"><div class="cert-field-lbl">NFT Affiliation</div><div class="cert-field-val" id="c-nft"></div></div>
+                <div class="cert-field"><div class="cert-field-lbl">Final Words</div><div class="cert-field-val" id="c-words"></div></div>
+                <div class="cert-field"><div class="cert-field-lbl">Wallet Status</div><div class="cert-field-val" id="c-wallet"></div></div>
+              </div>
+              <div class="cert-score-wrap">
+                <div class="cert-score-label">☠ Pain Score (Harshness of Death) — <span id="c-score-num"></span>/100</div>
+                <div class="cert-score-bar"><div class="cert-score-fill" id="c-score-fill"></div><div class="cert-score-val" id="c-score-val"></div></div>
+              </div>
+              <div class="cert-section-head">Witness Testimony</div>
+              <div class="cert-field"><div class="cert-field-val" id="c-testimony" style="font-size:9px;line-height:1.6;font-style:italic;color:#2a1000"></div></div>
             </div>
           </div>
-
-          <div class="cert-two-col">
-            <div>
-              <div class="cert-section-head">◈ Planetary Origin</div>
-              <div class="cert-field"><div class="cert-field-label">Home Planet</div><div class="cert-field-val" id="c-planet"></div></div>
-              <div class="cert-field"><div class="cert-field-label">Galaxy Quadrant</div><div class="cert-field-val" id="c-quadrant"></div></div>
-              <div class="cert-field"><div class="cert-field-label">Atmosphere</div><div class="cert-field-val" id="c-atmo"></div></div>
+          <div class="cert-bottom">
+            <div style="display:flex;align-items:center;gap:0.5rem">
+              <div class="cert-stamp red"><div class="stamp-txt">OFFICIALLY<br>REKT<br>☠<br>BBD</div></div>
             </div>
-            <div>
-              <div class="cert-section-head">◈ Clinical Vitals</div>
-              <div class="cert-field"><div class="cert-field-label">Blood Type</div><div class="cert-field-val" id="c-blood"></div></div>
-              <div class="cert-field"><div class="cert-field-label">Primary Pathology</div><div class="cert-field-val" id="c-path"></div></div>
-              <div class="cert-field"><div class="cert-field-label">Attending Physician</div><div class="cert-field-val" id="c-doctor"></div></div>
-            </div>
-          </div>
-
-          <div class="cert-section">
-            <div class="cert-section-head">◈ Vital Signs</div>
-            <div id="c-vitals"></div>
-          </div>
-
-          <div class="cert-section">
-            <div class="cert-section-head">◈ Clinical Diagnoses — DSM-∞ (Intergalactic Edition)</div>
-            <div id="c-diagnoses"></div>
-          </div>
-
-          <div class="transmission-box">
-            <div class="transmission-label">📡 Alien Analysis of Subject Transmissions</div>
-            <span id="c-transmission"></span>
-          </div>
-
-          <div class="rx-block">
-            <div class="rx-symbol">℞</div>
-            <div class="cert-section-head">◈ Prescribed Treatment Protocol</div>
-            <ul class="rx-items" id="c-rx"></ul>
-          </div>
-
-          <div class="stamps-row">
-            <div class="cert-stamp red"><div class="stamp-txt red">PSYCHIATRIC<br>RISK<br>ASSESSED<br>IGPB</div></div>
             <div class="cert-sig-block">
-              <div class="cert-sig" id="c-sig">Dr. Zyx'thara Ql̃b</div>
-              <div class="cert-sig-label">CHIEF PSYCHIATRIST · ANDROMEDA GENERAL<br>DEPT. OF HUMAN BEHAVIORAL ANOMALIES</div>
+              <div class="cert-sig">Satoshi's Ghost</div>
+              <div class="cert-sig-lbl">CHIEF CORONER · BLOCKCHAIN BUREAU OF DEATHS<br>DEPT. OF DEGENERATE AFFAIRS · EST. BLOCK #0</div>
             </div>
-            <div class="cert-stamp" id="c-stamp2"><div class="stamp-txt" id="c-stamp2-txt"></div></div>
+            <div style="display:flex;align-items:center;justify-content:flex-end;gap:0.5rem">
+              <div class="cert-stamp black"><div class="stamp-txt dark">NO REFUNDS<br>NO RESCUE<br>NGMI<br>RIP</div></div>
+            </div>
           </div>
-
-          <div class="cert-footer-note">⚠ 100% fictional · Entertainment only · Not medical advice · The IGPB does not exist (as far as we know) · Results algorithmically generated · No actual evaluation performed · © IGPB Andromeda Division</div>
+          <div class="cert-footer-note">☠ This certificate is 100% fictional and for entertainment purposes only. No actual burials were performed. The Blockchain Bureau of Deaths is not a real institution. Any resemblance to actual degenerate losses is purely statistically inevitable. DYOR. NGMI. © BBD Crypto Division. All bags buried.</div>
         </div></div></div>
       </div>
     </div>
-
     <div class="actions">
-      <button class="btn-action primary" onclick="downloadCert()">⬇ SAVE CERTIFICATE</button>
-      <button class="btn-action" onclick="shareOnX()">𝕏 SHARE ON X</button>
+      <button class="btn-act primary" onclick="downloadCert()">⬇ SAVE DEATH CERTIFICATE</button>
+      <button class="btn-act" onclick="shareOnX()">𝕏 SHARE YOUR DEATH</button>
     </div>
-    <div class="share-note">📸 Attach your certificate image when tweeting for maximum damage</div>
-    <button class="btn-again" onclick="resetAll()">▶ EVALUATE ANOTHER SUBJECT</button>
+    <div class="share-note">📸 Attach your certificate when posting — spread the grief</div>
+    <button class="btn-again" onclick="resetAll()">☠ BURY ANOTHER DEGEN</button>
   </div>
 
-  <div class="tab-content" id="tab-board">
+  <div id="leaderboard">
+    <div class="lb-title">☠ Hall of the Rekt ☠</div>
     <div class="lb-wrap">
-      <div class="lb-header">
-        <div>#</div><div>SUBJECT</div><div>PLANET</div><div style="text-align:right">THREAT</div>
-      </div>
-      <div id="leaderboard-rows"><div class="lb-empty">No cases filed yet.</div></div>
+      <div class="lb-head"><div>#</div><div>DECEASED</div><div>CAUSE</div><div style="text-align:right">PAIN</div></div>
+      <div id="lb-rows"><div class="lb-empty">The cemetery is empty. Be the first to be buried.</div></div>
     </div>
-    <button class="btn-again" style="margin-top:1rem" onclick="resetAll()">▶ EVALUATE ANOTHER SUBJECT</button>
   </div>
-</div>
 
-<div class="site-footer">
-  <div class="footer-stat">TOTAL CASES FILED ACROSS THE GALAXY: <span id="footer-total">0</span></div>
-</div>
+  <div class="site-footer">
+    <div class="footer-txt">BLOCKCHAIN BUREAU OF DEATHS · EST. BLOCK #0 · NOT FINANCIAL ADVICE · NOT MEDICAL ADVICE · NGMI</div>
+  </div>
 </div>
 
 <script>
-// ── STARFIELD ──
-(function(){
-  const c=document.getElementById('bgCanvas'),ctx=c.getContext('2d');
-  let W,H,stars=[],nebs=[];
-  function resize(){
-    W=c.width=window.innerWidth;H=c.height=window.innerHeight;
-    stars=Array.from({length:240},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.3+0.1,spd:Math.random()*0.12+0.01,tw:Math.random()*Math.PI*2,purple:Math.random()<0.25}));
-    nebs=Array.from({length:5},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*130+60,ang:Math.random()*Math.PI*2,spd:Math.random()*0.12+0.04,purple:Math.random()<0.6}));
-  }
-  function draw(){
-    ctx.clearRect(0,0,W,H);
-    nebs.forEach(n=>{
-      n.ang+=0.0015;n.x+=Math.cos(n.ang)*n.spd;n.y+=Math.sin(n.ang)*n.spd;
-      if(n.x<-n.r)n.x=W+n.r;if(n.x>W+n.r)n.x=-n.r;
-      if(n.y<-n.r)n.y=H+n.r;if(n.y>H+n.r)n.y=-n.r;
-      const g=ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r);
-      const col=n.purple?`rgba(150,0,220,`:`rgba(30,0,180,`;
-      g.addColorStop(0,col+'0.09)');g.addColorStop(1,col+'0)');
-      ctx.fillStyle=g;ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,Math.PI*2);ctx.fill();
+// ══════════════════════════════════════
+// SUPABASE
+// ══════════════════════════════════════
+const SB_URL='https://bihxasafwmgvchdbyajy.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJpaHhhc2Fmd21ndmNoZGJ5YWp5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1MjY1OTEsImV4cCI6MjA5MTEwMjU5MX0.uAZUUBViomJQi6UxQyAt0xZMUC-PRc8h3wVOEBuY_FI';
+
+async function sbFetch(path,method='GET',body=null){
+  const opts={method,headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=minimal'}};
+  if(body)opts.body=JSON.stringify(body);
+  const r=await fetch(SB_URL+path,opts);
+  if(method==='GET')return r.json();
+  return r;
+}
+
+async function saveToSupabase(m){
+  try{
+    await sbFetch('/rest/v1/crypto_tombstones','POST',{
+      handle:m.handle.toLowerCase(),
+      death_score:m.score,
+      cause_of_death:m.cause,
+      epitaph:m.epitaph,
+      nft_reference:m.nft,
+      time_of_death:m.timeOfDeath,
+      last_holding:m.holding
     });
-    if(Math.random()<0.004){
-      const sx=Math.random()*W,sy=Math.random()*H*0.5;
-      ctx.strokeStyle='rgba(200,150,255,0.5)';ctx.lineWidth=0.8;
-      ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(sx+70,sy+25);ctx.stroke();
-    }
-    stars.forEach(s=>{
-      s.tw+=0.016;s.y+=s.spd;if(s.y>H){s.y=0;s.x=Math.random()*W}
-      const op=0.25+0.75*Math.abs(Math.sin(s.tw));
-      ctx.fillStyle=s.purple?`rgba(210,140,255,${op})`:`rgba(220,235,255,${op})`;
-      ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fill();
+  }catch(e){console.log('sb save err',e)}
+}
+
+async function loadLeaderboard(){
+  try{
+    const data=await sbFetch('/rest/v1/crypto_tombstones?select=handle,death_score,cause_of_death&order=death_score.desc&limit=20');
+    renderLeaderboard(data);
+    renderHUD(data);
+  }catch(e){console.log('sb load err',e)}
+}
+
+function renderLeaderboard(data){
+  const el=document.getElementById('lb-rows');
+  if(!data||!data.length){el.innerHTML='<div class="lb-empty">The cemetery is empty. Be the first to be buried.</div>';return}
+  el.innerHTML=data.map((r,i)=>`
+    <div class="lb-row">
+      <div class="lb-rank ${i===0?'g':i===1?'s':i===2?'b':''}">${i+1}</div>
+      <div class="lb-handle">@${r.handle}<small>${r.cause_of_death}</small></div>
+      <div class="lb-cause">${r.cause_of_death.split(' ').slice(0,3).join(' ')}...</div>
+      <div class="lb-score ${r.death_score>=90?'max':''}">${r.death_score}</div>
+    </div>`).join('');
+}
+
+function renderHUD(data){
+  if(!data||!data.length)return;
+  document.getElementById('hud-buried').textContent=data.length;
+  const avg=Math.round(data.reduce((s,r)=>s+r.death_score,0)/data.length);
+  document.getElementById('hud-avg').textContent=avg;
+  document.getElementById('hud-max').textContent=data[0]?.death_score||0;
+}
+
+// ══════════════════════════════════════
+// CEMETERY SCENE BUILDER
+// ══════════════════════════════════════
+function buildCemetery(){
+  const c=document.getElementById('cemetery-inner');
+  const W=window.innerWidth;
+
+  // Stars
+  for(let i=0;i<60;i++){
+    const s=document.createElement('div');
+    s.className='star';
+    const sz=Math.random()*1.5+0.5;
+    s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*60}%;--d:${1+Math.random()*3}s`;
+    c.appendChild(s);
+  }
+
+  // Fog
+  const fogColors=['rgba(20,40,15','rgba(15,25,10','rgba(25,35,20'];
+  fogColors.forEach((col,i)=>{
+    const f=document.createElement('div');
+    f.className='fog';
+    f.style.cssText=`background:${col},0.8);bottom:${40+i*25}px;height:${60+i*20}px;left:0;--fd:${18+i*5}s;animation-delay:${-i*6}s`;
+    c.appendChild(f);
+  });
+
+  // Grass blades
+  for(let i=0;i<80;i++){
+    const g=document.createElement('div');
+    g.className='grass-blade';
+    const h=8+Math.random()*14;
+    g.style.cssText=`left:${Math.random()*100}%;height:${h}px;--sw:${2+Math.random()*3}s;animation-delay:${-Math.random()*3}s`;
+    c.appendChild(g);
+  }
+
+  // Trees
+  const treePositions=[5,12,82,91];
+  treePositions.forEach(x=>{
+    const t=document.createElement('div');
+    t.className='tree';
+    const h=60+Math.random()*40;
+    t.style.left=x+'%';
+    t.innerHTML=`<div class="tree-top" style="width:${30+Math.random()*20}px;height:${h}px;margin:0 auto"></div><div class="tree-trunk" style="height:${20+Math.random()*15}px"></div>`;
+    c.appendChild(t);
+  });
+
+  // Background tombstones — FAMOUS CRYPTO FIGURES (secret clickable)
+  const famousFigures=[
+    {x:8,y:165,name:'SBF',label:'Sam Bankman-Fried',epitaph:'Effective altruism. Ineffective accounting.',color:'#6a6a5a'},
+    {x:18,y:175,name:'Do Kwon',label:'Do Kwon',epitaph:'1 LUNA = 1 LUNA. Forever.',color:'#5a5a4a'},
+    {x:28,y:160,name:'3AC',label:'3 Arrows Capital',epitaph:'Liquidated. Then liquidated again.',color:'#7a7a6a'},
+    {x:72,y:168,name:'Celsius',label:'Celsius Network',epitaph:'Earn yield. Lose everything.',color:'#6a6a5a'},
+    {x:82,y:172,name:'Terra Luna',label:'Terra/Luna',epitaph:'Algorithmic. Stable. Gone.',color:'#5a5a4a'},
+    {x:92,y:162,name:'FTX',label:'FTX Exchange',epitaph:'Not your keys. Not your coins.',color:'#7a7a6a'},
+  ];
+
+  // Random secret tombstones (non-clickable style, hidden clues)
+  const secretStones=[
+    {x:38,y:158,name:'?',label:'👻 Satoshi\'s Real Identity',color:'#4a4a3a'},
+    {x:50,y:170,name:'?',label:'💀 Your First Trade',color:'#5a5a4a'},
+    {x:62,y:155,name:'?',label:'🔮 The Next Rug Pull',color:'#4a4a3a'},
+  ];
+
+  [...famousFigures,...secretStones].forEach(fig=>{
+    const stone=document.createElement('div');
+    stone.className='bg-stone';
+    stone.style.cssText=`left:${fig.x}%;bottom:${420-fig.y}px;z-index:2`;
+    const w=32+Math.random()*12;
+    stone.innerHTML=`
+      <div class="secret-name">${fig.label}</div>
+      <svg width="${w}" height="${w*1.3}" viewBox="0 0 40 52" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5,22 Q5,5 20,3 Q35,5 35,22 L35,50 Q20,52 5,50 Z" fill="${fig.color}" stroke="#3a3a2a" stroke-width="1"/>
+        <text x="20" y="30" text-anchor="middle" font-family="Share Tech Mono" font-size="8" fill="#2a2a1a">${fig.name.substring(0,3)}</text>
+      </svg>`;
+    stone.addEventListener('click',()=>{
+      stone.classList.toggle('revealed');
+      if(stone.classList.contains('revealed')){
+        showToast('☠ '+fig.label+' — '+fig.epitaph);
+        setTimeout(()=>stone.classList.remove('revealed'),4000);
+      }
+    });
+    c.appendChild(stone);
+  });
+
+  // Zombies
+  buildZombies(c);
+
+  // Rain canvas
+  buildRain();
+}
+
+function buildZombies(c){
+  const zombieConfigs=[
+    {spd:22,delay:0,y:0,size:28},
+    {spd:16,delay:-8,y:-2,size:24},
+    {spd:28,delay:-14,y:2,size:22},
+  ];
+  zombieConfigs.forEach(z=>{
+    const el=document.createElement('div');
+    el.className='zombie';
+    el.style.cssText=`--zspd:${z.spd}s;animation-delay:${z.delay}s;bottom:${92+z.y}px`;
+    el.innerHTML=`<svg width="${z.size}" height="${z.size*1.4}" viewBox="0 0 28 40" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="14" cy="8" r="7" fill="#5a7a4a" stroke="#3a5a2a" stroke-width="0.5"/>
+      <circle cx="11" cy="7" r="1.5" fill="#cc2200"/>
+      <circle cx="17" cy="7" r="1.5" fill="#cc2200"/>
+      <path d="M10,11 Q14,14 18,11" stroke="#3a5a2a" stroke-width="1" fill="none"/>
+      <rect x="9" y="15" width="10" height="13" rx="2" fill="#4a6a3a" stroke="#2a4a1a" stroke-width="0.5"/>
+      <line x1="14" y1="28" x2="11" y2="40" stroke="#4a6a3a" stroke-width="3" stroke-linecap="round"/>
+      <line x1="14" y1="28" x2="17" y2="40" stroke="#4a6a3a" stroke-width="3" stroke-linecap="round"/>
+      <line x1="9" y1="17" x2="2" y2="24" stroke="#4a6a3a" stroke-width="3" stroke-linecap="round"/>
+      <line x1="19" y1="17" x2="26" y2="22" stroke="#4a6a3a" stroke-width="3" stroke-linecap="round"/>
+    </svg>`;
+    c.appendChild(el);
+  });
+}
+
+function buildRain(){
+  const canvas=document.getElementById('rainCanvas');
+  const ctx=canvas.getContext('2d');
+  canvas.width=window.innerWidth;canvas.height=420;
+  const drops=Array.from({length:80},()=>({x:Math.random()*canvas.width,y:Math.random()*canvas.height,spd:4+Math.random()*4,len:8+Math.random()*8}));
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.strokeStyle='rgba(150,200,150,0.5)';ctx.lineWidth=0.5;
+    drops.forEach(d=>{
+      ctx.beginPath();ctx.moveTo(d.x,d.y);ctx.lineTo(d.x+2,d.y+d.len);ctx.stroke();
+      d.y+=d.spd;d.x+=1;
+      if(d.y>canvas.height){d.y=0;d.x=Math.random()*canvas.width}
     });
     requestAnimationFrame(draw);
   }
-  window.addEventListener('resize',resize);resize();draw();
-})();
-
-// ── UFO ──
-(function(){
-  const ufo=document.getElementById('ufo-wrap');
-  const hint=document.getElementById('ufo-hint');
-  const lights=document.querySelectorAll('.ufl');
-  let lt=0;
-  setInterval(()=>{lt++;lights.forEach((l,i)=>{l.style.opacity=Math.abs(Math.sin((lt+i*2)*0.4))>0.5?'1':'0.2'})},110);
-  let flying=false,fx=0,fy=0,vx=0,vy=0,ang=0,clicks=0,raf=null,origParent,origNext;
-  ufo.addEventListener('click',()=>{
-    clicks++;
-    if(clicks===1){hint.textContent='🚀 click again to launch!';return}
-    if(flying){
-      flying=false;cancelAnimationFrame(raf);
-      ufo.style.cssText='';
-      if(origNext)origParent.insertBefore(ufo,origNext);else origParent.appendChild(ufo);
-      hint.style.display='block';hint.textContent='🛸 click to launch again';
-      return;
-    }
-    hint.style.display='none';
-    const rect=ufo.getBoundingClientRect();
-    fx=rect.left+55;fy=rect.top+55;vx=(Math.random()-0.5)*7;vy=-4-Math.random()*3;
-    origParent=ufo.parentNode;origNext=ufo.nextSibling;
-    ufo.style.position='fixed';ufo.style.left=(fx-55)+'px';ufo.style.top=(fy-55)+'px';
-    ufo.style.zIndex='9999';ufo.style.width='110px';ufo.style.transition='none';
-    document.body.appendChild(ufo);
-    flying=true;
-    (function loop(){
-      if(!flying)return;
-      vx+=(Math.random()-0.5)*0.4;vy+=(Math.random()-0.5)*0.35-0.04;
-      const spd=Math.sqrt(vx*vx+vy*vy);if(spd>8){vx=vx/spd*8;vy=vy/spd*8}
-      fx+=vx;fy+=vy;
-      if(fx<55){fx=55;vx=Math.abs(vx)}if(fx>window.innerWidth-55){fx=window.innerWidth-55;vx=-Math.abs(vx)}
-      if(fy<55){fy=55;vy=Math.abs(vy)}if(fy>window.innerHeight-55){fy=window.innerHeight-55;vy=-Math.abs(vy)}
-      ang+=vx*0.7;
-      ufo.style.left=(fx-55)+'px';ufo.style.top=(fy-55)+'px';
-      ufo.style.transform=`rotate(${ang}deg)`;
-      raf=requestAnimationFrame(loop);
-    })();
-  });
-})();
-
-// ── STORAGE ──
-const SK='igpb_v4';
-let DB={leaderboard:[]};
-
-async function loadDB(){
-  try{const r=await window.storage.get(SK,true);if(r&&r.value){const p=JSON.parse(r.value);if(p&&Array.isArray(p.leaderboard))DB=p;}}catch(e){}
-  renderHUD();renderLeaderboard();
-}
-async function saveDB(){
-  try{await window.storage.set(SK,JSON.stringify(DB),true)}catch(e){}
-}
-function renderHUD(){
-  const n=DB.leaderboard.length;
-  document.getElementById('hud-cases').textContent=n;
-  document.getElementById('footer-total').textContent=n;
-  document.getElementById('hud-secret').textContent=DB.leaderboard.filter(r=>r.isSecret).length;
-  const ORDER={OMEGA:0,CLASSIFIED:1,CRITICAL:2,HIGH:3,MEDIUM:4,LOW:5};
-  const sorted=[...DB.leaderboard].sort((a,b)=>(ORDER[a.threat]??9)-(ORDER[b.threat]??9));
-  document.getElementById('hud-threat').textContent=sorted[0]?sorted[0].threat:'—';
-}
-function renderLeaderboard(){
-  const el=document.getElementById('leaderboard-rows');
-  if(!DB.leaderboard.length){el.innerHTML='<div class="lb-empty">No cases filed yet. Be the first subject.</div>';return}
-  const ORDER={OMEGA:0,CLASSIFIED:1,CRITICAL:2,HIGH:3,MEDIUM:4,LOW:5};
-  const sorted=[...DB.leaderboard].sort((a,b)=>(ORDER[a.threat]??9)-(ORDER[b.threat]??9));
-  el.innerHTML=sorted.slice(0,50).map((r,i)=>`
-    <div class="lb-row">
-      <div class="lb-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${i+1}</div>
-      <div><div class="lb-handle">@${r.handle}${r.isSecret?' 🔮':''}<small>${r.species}</small></div></div>
-      <div class="lb-planet">${(r.planet||'').split(' ')[0]}</div>
-      <div class="lb-threat t-${r.threat}">${r.threat}</div>
-    </div>`).join('');
+  draw();
 }
 
-// ── RNG ──
-function mkRng(str){
-  let h=0;for(let i=0;i<str.length;i++){h=Math.imul(31,h)+str.charCodeAt(i)|0}
-  return function(){h^=h<<13;h^=h>>17;h^=h<<5;return(h>>>0)/4294967296}
+// ══════════════════════════════════════
+// SEEDED RNG
+// ══════════════════════════════════════
+function mkRng(str,salt=''){
+  let h=0;for(let i=0;i<(str+salt).length;i++){h=Math.imul(31,h)+(str+salt).charCodeAt(i)|0}
+  return()=>{h^=h<<13;h^=h>>17;h^=h<<5;return(h>>>0)/4294967296}
 }
-function mkRngS(str,salt){return mkRng(str+'__'+salt)}
 function pick(arr,rng){return arr[Math.floor(rng()*arr.length)]}
 function between(a,b,rng){return Math.floor(rng()*(b-a+1))+a}
 
-// ── DATA ──
-const PLANETS=['Copium-7','Bagholdistan Prime','Dopamine-3','Thinkpiece-9','Chronically-Online IV','Delusion Nebula B','Reply-Guy Major','Main Character Station','Ratio Belt Alpha','Vague-Post Cluster','Midnight Thought Sector','Lurker\'s Moon','Hot-Take Dwarf Star','Degen Supernova','Scroll-Hole Void','Emoji Archipelago','The Discourse Ring','Engagement Bait Alpha','Subtweet Minor','Clapback Meridian','The Clout Cluster','Soft Launch Galaxy','Parasocial Nebula','The Irony Dimension','Lowercase Letter World','Therapy Speak Asteroid','Algorithm Worship Moon','Trending Topic Graveyard','The Vibe Singularity','Sigma Drift Station'];
-const QUADRANTS=['Outer Delusion Arm','Deep Cope Sector','The Irony Belt','Far Chronology Reach','Andromeda Reply Zone','Dark Matter Feed','The Parasocial Expanse','Engagement Bait Corridor','Sigma Drift Sector','The Trending Void','Post-Ratio Recovery Zone','Chronically-Online Rift','The Subtweet Nebula','Main Character Meridian'];
-const ATMOS=['67% hot takes, 28% cope, 5% actual content','81% unverified opinions, 14% reposts, 5% original thought','74% gm energy, 20% ngmi vibes, 6% literacy','55% self-promotion, 40% ambient anxiety, 5% insight','90% ratio risk, 9% delusion, 1% grass','62% oversharing, 35% lurking, 3% coherence','78% parasocial energy, 18% soft launch vibes, 4% clarity','44% irony, 44% sincerity, 12% confused observers','99% hopium, 0.9% analysis, 0.1% profit','88% algorithm worship, 10% authentic moments, 2% actual thoughts','71% unsolicited advice, 24% vague inspiration, 5% receipts','63% lowercase energy, 30% ellipsis abuse, 7% punctuation'];
-const BLOODS=['Unverified+','Cope-','NGMI','WAGMI (pending)','Ratio+','NPC-','Main Character O+','Red Flag Rh+','Parasocial AB+','Sigma-','Degen Rh+','Lowercase b-','Based? (unconfirmed)','Chronically-Online O-'];
-const PATHS=['Chronic Oversharing Disorder','Terminal Reply-Guy Syndrome','Advanced Main Character Complex','Acute Vague-Posting Disorder','Irreversible Thread Addiction','Post-Traumatic Ratio Disorder','Persistent Contrarian Syndrome','Compulsive Hot-Take Dependency','Stage-4 Degen Disorder','Late-Stage Chronically-Online-itis','Acute Parasocial Dependency Syndrome','Recurring Soft Launch Syndrome','Compulsive Algorithm Chasing Disorder','Persistent Lowercase Affectation','Terminal Vibe-Only Communication Disorder','Chronic Subtweet Psychosis'];
-const DOCS=['Dr. Zyx\'thara Ql̃b','Dr. Mrph Uvvon III','Dr. Qax\'neel Thorrb','Dr. Zzx Uvvula-Prime','Dr. Blrp Morthaan','Dr. Kryx\'zaan Uvv','Dr. Thlbb Qqorthan','Dr. Xzz\'mrph Blaan','Dr. Syxx Oorvlan'];
-
-const ALL_SPECIES=[
-  {name:'Homo Chronicus Onlinus',rarity:'common'},
-  {name:'Subspecies: Reply Guy Maximus',rarity:'common'},
-  {name:'Homo Vague-Postus Infernus',rarity:'common'},
-  {name:'Genus: Terminal Degen Sapiens',rarity:'common'},
-  {name:'Chronicus Scrollus Infinitus',rarity:'common'},
-  {name:'Homo Ratio-Victimus',rarity:'common'},
-  {name:'Main Character Sapiens Erectus',rarity:'common'},
-  {name:'Lurker Nocturnus Profundus',rarity:'common'},
-  {name:'Thinkpiece Erectus Longformis',rarity:'common'},
-  {name:'Cope Meridianus Chronicus',rarity:'common'},
-  {name:'Parasocial Bonding Organism',rarity:'common'},
-  {name:'Algorithm Worship Primate',rarity:'common'},
-  {name:'Homo Softlaunchicus',rarity:'common'},
-  {name:'Subtweetus Passivo-Aggressivus',rarity:'common'},
-  {name:'Lowercase Aestheticus Maximus',rarity:'common'},
-  {name:'Contrarius Perpetuus',rarity:'common'},
-  {name:'Ratio Immunity Deficiency Host',rarity:'common'},
-  {name:'Trending Topic Chaser Sapiens',rarity:'common'},
-  {name:'Sigma Drifter (Unverified)',rarity:'rare'},
-  {name:'Double-Irony Organism',rarity:'rare'},
-  {name:'The Unprompted Threader',rarity:'rare'},
-  {name:'Benevolent Reply Guy (Anomaly)',rarity:'rare'},
-  {name:'Chronicus Correctus Onlinus',rarity:'rare'},
-  {name:'👁️ THE VOID GAZER — Entity of Pure Posting Energy',rarity:'secret',threat:'OMEGA',badge:'⚠ OMEGA-CLASS ENTITY DETECTED'},
-  {name:'🔮 PROPHET OF THE ALGORITHM — Chosen by the Feed',rarity:'secret',threat:'CLASSIFIED',badge:'🔒 CLASSIFIED — LEVEL 9 CLEARANCE ONLY'},
-  {name:'☄️ THE ANCIENT LURKER — Has Not Posted Since 2011',rarity:'secret',threat:'CLASSIFIED',badge:'🔒 TEMPORAL ANOMALY DETECTED'},
-  {name:'🌀 RECURSION ENTITY — Posts About Posting About Posting',rarity:'secret',threat:'OMEGA',badge:'⚠ RECURSIVE THREAT — DO NOT ENGAGE'},
-  {name:'⚡ THE RATIO GOD — 100% Hit Rate, Zero Remorse',rarity:'secret',threat:'CRITICAL',badge:'⚡ RATIO DEITY — APPROACH WITH EXTREME CAUTION'},
-];
-
-const DIAGNOSES=[
-  {code:'X-4.20.1',name:'Chronic Reply-Guy Disorder — compulsive correction of strangers who did not ask'},
-  {code:'X-6.9.0',name:'Acute Main Character Syndrome — clinical belief that timeline events are personally curated'},
-  {code:'X-3.14.2',name:'Terminal Vague-Poster Disorder — transmissions designed to be felt, never understood'},
-  {code:'X-1.11.1',name:'Post-Traumatic Ratio Disorder — cognitively frozen since a 2019 ratio incident'},
-  {code:'X-7.0.0',name:'Persistent Hot-Take Dependency — physiologically incapable of a room-temperature opinion'},
-  {code:'X-2.22.2',name:'Compulsive Thread Syndrome — converts every thought into 47-part unsolicited threads'},
-  {code:'X-9.0.1',name:'Chronically-Online Encephalopathy — brain operates exclusively in 280-character units'},
-  {code:'X-5.5.5',name:'Advanced Cope Accumulation — has not acknowledged being wrong since the Obama administration'},
-  {code:'X-8.1.3',name:'Irreversible Clout-Chasing — measurable deterioration of judgment in pursuit of engagement'},
-  {code:'X-0.0.1',name:'Idiopathic Gm Syndrome — broadcasts gm into the void daily with unshakeable conviction'},
-  {code:'X-4.4.4',name:'Acute Subtweet Psychosis — masterfully passive-aggressive. Target identity: unknown.'},
-  {code:'X-6.6.6',name:'Stage-4 Degen Disorder — beyond clinical intervention. Observation only.'},
-  {code:'X-3.3.3',name:'Parasocial Attachment Disorder — detailed mental models of strangers based on their posts'},
-  {code:'X-1.2.3',name:'Algorithm Worship Syndrome — posts optimised for the feed, never for humans'},
-  {code:'X-7.7.7',name:'Soft Launch Compulsion — announces nothing clearly, implies everything cryptically'},
-  {code:'X-2.0.0',name:'Chronic Unprompted Advice Syndrome — solves problems nobody mentioned having'},
-  {code:'X-5.0.1',name:'Recurrent Discourse Magnet Disorder — somehow at the center of every argument'},
-  {code:'X-9.9.9',name:'Terminal Irony Poisoning — sincerity receptors fully atrophied. No known treatment.'},
-  {code:'X-0.5.0',name:'Lowercase Affectation Disorder — refuses capital letters as a full personality'},
-  {code:'X-8.8.8',name:'Viral Proximity Syndrome — retweets go viral; original content does not. Patient is philosophical.'},
-];
-
-const TRANSMISSIONS=[
-  h=>`After ${between(400,2000,mkRngS(h,'t1'))} solar cycles of observation, our analysts conclude @${h} engages in a ritual called "posting." Each transmission is designed to elicit emotional responses from strangers. The subject remains unaware this is not working.`,
-  h=>`Our linguists decoded @${h}'s signal. The dominant behavior is "the take" — brief assertions of opinion emitted at irregular intervals to establish dominance. Territory claimed: zero. Strangers offended: many.`,
-  h=>`@${h}'s transmissions have been intercepted for ${between(2,14,mkRngS(h,'t2'))} of your Earth years. In that time, our civilization has learned much about human suffering. The subject continues posting regardless. We find this both baffling and deeply relatable.`,
-  h=>`Analysis of @${h}'s output shows peak transmission at ${between(10,3,mkRngS(h,'t3'))}pm local time. Our hypothesis: this is when their self-awareness module enters low-power mode. Three analysts submitted this as a doctoral thesis.`,
-  h=>`The entity @${h} emits a potent signal classified as "the vague-post." Maximum emotional payload. Minimum semantic content. Seventeen analysts resigned upon decoding it. The remaining three received medals.`,
-  h=>`@${h} demonstrates posting confidently about topics where zero expertise is detectable. Our xenolinguists are calling this "galaxy-brained." They mean it literally.`,
-  h=>`Monitoring of @${h} shows the subject derives energy from engagement metrics. When likes decline, posting frequency increases. We have observed this loop for ${between(1,8,mkRngS(h,'t4'))} years. We are concerned.`,
-  h=>`@${h} exhibits what we term "parasocial projection" — forming detailed mental models of strangers based on ${between(3,47,mkRngS(h,'t5'))} posts. We do the same. We are also guilty.`,
-];
-
-const RX_LISTS=[
-  ['Touch grass (prescribed — 2x daily)','72 hours offline — mandatory','Vitamin D (sunlight, not screen glow)','Cease all hot-take production pending review'],
-  ['30-day lurking protocol — zero posts','1 genuine compliment per week to a real human','Unfollow anyone making you feel anything','Grass (we cannot stress this enough)'],
-  ['Read a book (not a thread — a full book)','Sleep before tweeting — revolutionary','Ratio immunity therapy — 12-week programme','50mg perspective, taken with water not cope'],
-  ['Mandatory 48hr device detox','Journal your opinions. Do not post them.','Skill issue resolution — 6 sessions','Unironically touch grass twice daily'],
-  ['Reduce posting frequency by 80%','Call someone on the phone — verbally','Cease quote-tweeting with only "this"','Confront one opinion in person — not via subtweet'],
-];
-
-const VITAL_KEYS=[
-  ['Cope Levels','Delusion Index','Ratio Resistance','Grass Deficiency'],
-  ['Hot-Take Velocity','Parasocial Load','Algorithm Dependency','Self-Awareness'],
-  ['Reply-Guy Index','Thread Addiction','Clout-Chase Drive','Irony Saturation'],
-];
-const VITAL_COLORS=['#cc1100','#bf00ff','#ff6600','#00cc66'];
-const THREAT_COLORS={LOW:'#00cc66',MEDIUM:'#ffaa00',HIGH:'#ff4400',CRITICAL:'#ff0044',OMEGA:'#bf00ff',CLASSIFIED:'#00ffcc'};
-
-// ── DERIVE (fully deterministic from handle) ──
-function derive(rawHandle){
-  const h=rawHandle.toLowerCase().trim();
-
-  const secretRoll=mkRngS(h,'secret')();
-  const isSecret=secretRoll<0.03;
-  const secretList=ALL_SPECIES.filter(s=>s.rarity==='secret');
-  const rareList=ALL_SPECIES.filter(s=>s.rarity==='rare');
-  const commonList=ALL_SPECIES.filter(s=>s.rarity==='common');
-
-  let species;
-  if(isSecret){species=pick(secretList,mkRngS(h,'stype'))}
-  else if(mkRngS(h,'rare')()<0.12){species=pick(rareList,mkRngS(h,'rtype'))}
-  else{species=pick(commonList,mkRngS(h,'ctype'))}
-
-  let threatPool=['LOW','LOW','LOW','MEDIUM','MEDIUM','MEDIUM','HIGH','HIGH','CRITICAL'];
-  if(isSecret&&species.threat){threatPool=[species.threat,species.threat,species.threat]}
-  const threat=pick(threatPool,mkRngS(h,'thr'));
-
-  const allD=[...DIAGNOSES];
-  const d1=pick(allD,mkRngS(h,'d1'));
-  const rem1=allD.filter(d=>d.code!==d1.code);
-  const d2=pick(rem1,mkRngS(h,'d2'));
-  const rem2=rem1.filter(d=>d.code!==d2.code);
-  const d3=pick(rem2,mkRngS(h,'d3'));
-
-  const vkeys=pick(VITAL_KEYS,mkRngS(h,'vk'));
-  const vitals=vkeys.map((k,i)=>({label:k,val:between(15,95,mkRngS(h,'vv'+i))}));
-
-  const caseNo='IGPB-'+Math.abs(h.split('').reduce((a,c)=>a+c.charCodeAt(0),0)).toString().padStart(8,'0');
-  const classLvl=between(3,9,mkRngS(h,'cl'));
-
-  return{
-    handle:rawHandle,
-    planet:pick(PLANETS,mkRngS(h,'pl')),
-    quadrant:pick(QUADRANTS,mkRngS(h,'qu')),
-    atmo:pick(ATMOS,mkRngS(h,'at')),
-    blood:pick(BLOODS,mkRngS(h,'bl')),
-    path:pick(PATHS,mkRngS(h,'pt')),
-    doctor:pick(DOCS,mkRngS(h,'dr')),
-    species:species.name,
-    isSecret,
-    secretBadge:isSecret?(species.badge||''):'',
-    diagnoses:[d1,d2,d3],
-    transmission:pick(TRANSMISSIONS,mkRngS(h,'tm'))(rawHandle),
-    rx:pick(RX_LISTS,mkRngS(h,'rx')),
-    vitals,threat,caseNo,classLvl,
+// ══════════════════════════════════════
+// HANDLE WORDPLAY
+// ══════════════════════════════════════
+function handleWordplay(handle){
+  const h=handle.toLowerCase();
+  const words={
+    'just':'there was "just" not enough liquidity left',
+    'blue':'feeling blue was an understatement',
+    'bluish':'only "bluish" remnants remained in the wallet',
+    'moon':'they never made it to the moon',
+    'sol':'their soul left with their SOL',
+    'eth':'eth stands for "everything they had"',
+    'ape':'they aped in one too many times',
+    'degen':'a true degen, to the bitter end',
+    'whale':'even whales can beach themselves',
+    'gm':'their last tweet was "gm". it was 11:47pm.',
+    'wagmi':'they said wagmi. they were not going to make it.',
+    'ngmi':'at least they were honest about it',
+    'based':'turns out being based doesn\'t pay the bills',
+    'alpha':'chased alpha. found omega.',
+    'diamond':'diamond hands became diamond dust',
+    'gold':'all that glittered was not gold. or anything.',
+    'king':'the king has no kingdom, and no coins',
+    'god':'even gods get liquidated',
+    'magic':'the magic wore off at block 18,432,991',
+    'rich':'the irony was not lost on anyone',
+    'hodl':'they hodled. the market did not care.',
+    'pump':'they believed in the pump. the dump believed in them.',
+    'nft':'the NFT was worth more than the wallet. briefly.',
+    'dao':'the DAO voted. the DAO lost.',
+    'defi':'decentralized finance. centralized losses.',
+    'layer':'they ran out of layers to add',
+    'meta':'the meta changed. they did not.',
+    'real':'nothing about this was real',
+    'dark':'into the dark pool, forever',
+    'swift':'gone as swiftly as the liquidity',
+    'fast':'fast fingers, slow brain',
+    'run':'they ran. the rug ran faster.',
+    'fly':'flew too close to the memecoin sun',
+    'fire':'got fired. then fired their savings.',
+    'ice':'their portfolio was put on ice',
+    'ghost':'now haunts Etherscan like a ghost',
+    'shadow':'a shadow of their former net worth',
+    'lost':'appropriately named',
+    'lucky':'luck ran out at block 19,221,887',
+    'happy':'happiness was a pre-market condition',
   };
+  for(const [word,line] of Object.entries(words)){
+    if(h.includes(word))return line;
+  }
+  return null;
 }
 
-// ── TABS ──
-function switchTab(id){
-  ['cert','board'].forEach(t=>{
-    document.getElementById('tab-btn-'+t).classList.toggle('active',t===id);
-    document.getElementById('tab-'+t).classList.toggle('active',t===id);
-  });
-  if(id==='board')renderLeaderboard();
+// ══════════════════════════════════════
+// DATA TABLES (100+ combinations)
+// ══════════════════════════════════════
+const CAUSES=[
+  'Rug Pull Asphyxiation','Terminal Bagholding Syndrome','Acute FOMO Overdose',
+  'Death by Leverage (100x)','Spontaneous Liquidation','Chronic Diamond Hand Failure',
+  'Pump.fun Poisoning','NFT Floor Price Collapse','Luna Re-Exposure Syndrome',
+  'Memecoin Cardiac Arrest','FUD-Induced Cardiac Event','Smart Contract Misadventure',
+  'Influencer Recommendation','Bought the Top, Sold the Bottom','Exit Liquidity Donation',
+  'Airdrop Wallet Drain','Phishing via "Official" Discord','Sold Too Early, Bought Too Late',
+  'Over-Leveraged Long on PEPE','Stablecoin Depeg Shock','Bridge Hack Exposure',
+  'Governance Token Betrayal','Algorithmic Stablecoin Faith','Copy-Traded the Wrong Whale',
+  'Rug by Anonymous Dev Team','Sent ETH to Wrong Address','Gas Fee Hemorrhage',
+  'BAYC Floor Price Grief','Ordinals Inscription Regret','DeGods Migration Trauma',
+  'Solana Downtime Stress','FTX Contagion Exposure','3AC Counter-Party Risk',
+  'Celsius Yield Addiction','Do Kwon Trust Issues','Crypto Twitter Hopium Overdose',
+];
+
+const HOLDINGS=[
+  'LUNA (both versions)','BAYC #8,721 (floor: 0.001 ETH)','Frosties NFT (delisted)','FTX IOU tokens',
+  '10,000 WIF at the top','Bored Bunny (rug confirmed)','HAWK Tuah coin ($490M → $4M)',
+  'A Mutant Ape Planet NFT','SOL at $260','DeGods Season 3 whitelist',
+  'Mad Lads #4,291 (illiquid)','1,000,000 BONK (pre-burn)','PEPE at ATH',
+  'Pudgy Penguins (post-PENGU dump)','Ordinal Punk #88','$PNUT at $1.8B MC',
+  'Leveraged DOGE position','CryptoPunk #3,100 (counterfit)','3AC loan collateral',
+  'Celsius "interest" account','Algorithmic UST stablecoins','FTX equity tokens',
+  'NodeMonkes #2,219 (1 BTC floor era)','Taproot Wizards inscription #42',
+  'Bitcoin Frog #6,669','A Baller Ape Club NFT','Big Daddy Ape Club SOL',
+  '$LIBRA (fake Eric Trump token)','Gen Z Quant memecoin (rugged live)',
+  'FARTCOIN at $2B MC','Azuki #7,772 (post-Elementals drama)',
+];
+
+const NFTS=[
+  'Bored Ape Yacht Club (ape #4,291 — now worthless)','CryptoPunks (sold too early in 2020)',
+  'Pudgy Penguins (bought post-PENGU airdrop)','DeGods (Season 3 optimist)',
+  'Mad Lads (Backpack wallet enjoyer)','Azuki (Elementals survivor)',
+  'Frosties (rug pull victim, DOJ case #1)','Mutant Ape Planet (copied the copycat)',
+  'Big Daddy Ape Club (Solana\'s finest rug)','Baller Ape Club ($2.7M vanished)',
+  'Evolved Apes (founder fled, 798 ETH gone)','NodeMonkes (Bitcoin Ordinals believer)',
+  'Ordinal Punks (first 100 club, sold at loss)','Bitcoin Frogs (hopium on BTC)',
+  'Taproot Wizards (4MB block of regret)','Bitcoin Puppets (MS Paint era believer)',
+  'Quantum Cats (evolving into nothing)','Runestones (airdrop farmer, exit liquidity)',
+  'SMB (Solana Monkey Business OG)','Okay Bears (polite bears, impolite losses)',
+  'Famous Fox Federation (foxed)','Doodles (DOOD token didn\'t doodle profits)',
+  'CryptoZoo (Logan Paul edition)','Pizza Ninjas (BTC ordinals speculator)',
+  'Galactic Geckos (touched grass, briefly)','Tensorians (gamified their losses)',
+];
+
+const FINAL_WORDS=[
+  '"This is the bottom."','"Not financial advice but buy NOW."','"The team is doxxed, it\'s safe."',
+  '"I\'m not selling."','"Trust the process."','"Wen moon?"','"Just DCA."','"Diamond hands 💎🙌"',
+  '"1000x easy."','"This one is different."','"I did my research."','"The fundamentals are strong."',
+  '"Normies will never understand."','"We\'re so early."','"This is fine. 🔥"',
+  '"My bags are heavy but my conviction is heavier."','"WAGMI."','"Gm. Today is the day."',
+  '"I\'m built different."','"They can\'t rug what I don\'t understand."',
+  '"Selling is for the weak."','"Just one more dip."','"I\'m a long-term investor."',
+  '"The chart looks bullish tho."','"My influencer said it was safe."',
+];
+
+const WALLET_STATUSES=[
+  'Drained (0.0000001 ETH remaining)','Liquidated at 3:47am','Compromised via fake Metamask',
+  'Frozen by Celsius','Lost seed phrase, lost everything','Rug detected. Wallet: emptied.',
+  'Approved malicious contract. Oops.','Transferred to exchange. Exchange collapsed.',
+  'Bridge hack victim. Bridge: gone.','Airdrop claim drained entire wallet.',
+  'Still holding. Wallet: technically alive.','On-chain: deceased. Off-chain: in denial.',
+  'Seed phrase tattooed on wrong arm','Multi-sig. But forgot all signers.',
+  'Hardware wallet. Lost the hardware.','Smart contract locked funds forever.',
+];
+
+const TESTIMONIES=[
+  'They came to us in the summer of 2021, eyes full of hope and a laptop full of leverage. We tried to warn them. They said "you just don\'t understand the technology."',
+  'The deceased was last seen at 4am, chart still open, coffee cold. They had been waiting for the bounce for six months. The bounce did not come.',
+  'Witnesses report the subject was "absolutely certain" the rug was FUD. They added to their position three times before the Discord was deleted.',
+  'A fellow degen recalls: "They were the first to buy and the last to sell. We salute their sacrifice as exit liquidity for the rest of us."',
+  'The coroner noted unusual levels of hopium in the bloodstream, consistent with chronic Crypto Twitter exposure. Cause: death by influencer recommendation.',
+  'Security footage shows the deceased approving an unlimited spend contract at 2:18am. The transaction completed in 0.3 seconds. The wallet took 8 years to fill.',
+  'Their final portfolio screenshot, posted minutes before death, showed a 94% drawdown. Caption: "Still bullish." Engagement: 2 likes. One was their mother.',
+  'They told me the fundamentals were strong," said a close friend. "They always said the fundamentals were strong. There were no fundamentals."',
+  'The Etherscan trace tells the whole story: 847 transactions, increasing in desperation, ending in one catastrophic approval. They never checked the contract.',
+  'Found with 47 open browser tabs: a portfolio tracker, a price alert, a YouTube video called "WHY NOW IS THE TIME TO BUY", and a Google search for "how to tell family I lost savings in crypto."',
+];
+
+const TIMES=[
+  'The exact moment SOL hit $260','During the LUNA depeg (live on CT)','3:47am on a Tuesday',
+  'While watching a Pump.fun stream','Right after the "safe" Discord announcement',
+  'Immediately post-leverage, pre-liquidation','At the peak of the NFT bull run',
+  'The day FTX filed for bankruptcy','During a "guaranteed" airdrop claim',
+  'Midnight, block #19,441,002','At the Bored Ape Yacht Club party, ironically',
+  'While DMing the "CEO" on Telegram','Thirty seconds after the influencer tweeted',
+  'The moment they said "I\'ll just hold through this"','Right when Celsius paused withdrawals',
+];
+
+const EPITAPHS=[
+  'They bought high. They sold low. They are survived by a seed phrase nobody can find.',
+  'Here lies one who aped into everything and swam in nothing. Diamond hands, empty wallet.',
+  'They trusted the process. The process did not reciprocate.',
+  'Bought the rumor. Sold the news. Neither was profitable.',
+  'They said gm every day for 847 days. On day 848, there was nothing left to say.',
+  'Not your keys, not your coins. Not your coins, not your problems. Not your problems, not your life savings.',
+  'They were early to everything except the exit.',
+  'A pioneer of exit liquidity. Generously provided it to others.',
+  'The floor was not, in fact, in.',
+  'They believed the chart. The chart lied.',
+  'WAGMI. They did not, in fact, all make it.',
+  'Survived bear markets, recessions, and FUD. Did not survive trusting an anonymous dev team.',
+  'Their conviction was unshakeable. Their portfolio was not.',
+  'The tokenomics were, in retrospect, a red flag.',
+  'They said "just wait" for five years. Then they ran out of time.',
+  'One last leverage trade. One final lesson.',
+  'They called it a "long-term investment." It lasted three weeks.',
+  'Rest easy. Your bags have been distributed to the whales.',
+  'They saw the rug coming. They bought more anyway.',
+  'An exit liquidity legend. The community thanks them for their service.',
+];
+
+// ══════════════════════════════════════
+// DERIVE (fully deterministic)
+// ══════════════════════════════════════
+function derive(handle){
+  const h=handle.toLowerCase().trim();
+  const r=mkRng(h),r2=mkRng(h,'b'),r3=mkRng(h,'c'),r4=mkRng(h,'d'),r5=mkRng(h,'e'),r6=mkRng(h,'f');
+  const r7=mkRng(h,'g'),r8=mkRng(h,'h'),r9=mkRng(h,'i'),r10=mkRng(h,'j');
+
+  const score=between(12,100,mkRng(h,'score'));
+  const wordplay=handleWordplay(handle);
+  const cause=pick(CAUSES,r);
+  const holding=pick(HOLDINGS,r2);
+  const nft=pick(NFTS,r3);
+  const words=pick(FINAL_WORDS,r4);
+  const wallet=pick(WALLET_STATUSES,r5);
+  const testimony=pick(TESTIMONIES,r6);
+  const time=pick(TIMES,r7);
+  const epitaphBase=pick(EPITAPHS,r8);
+  const epitaph=wordplay?wordplay+'. '+epitaphBase:epitaphBase;
+
+  const birthYear=between(2013,2021,r9);
+  const deathYear=between(2022,2025,r10);
+  const caseNo='BBD-'+Math.abs(h.split('').reduce((a,c)=>a+c.charCodeAt(0),0)).toString().padStart(7,'0');
+
+  return{handle,score,cause,holding,nft,words,wallet,testimony,time,epitaph,wordplay,birthYear,deathYear,caseNo,timeOfDeath:time};
 }
 
-// ── LOADING SEQUENCE ──
-const TLINES=['LOCKING ONTO SUBJECT SIGNAL...','CROSS-REFERENCING GALACTIC DATABASE...','DECODING TRANSMISSION PATTERNS...','RUNNING DSM-∞ DIAGNOSTIC PROTOCOL...','CLASSIFYING SPECIES AND SUBSPECIES...','CALCULATING THREAT TO CIVILIZATION...','CONSULTING DR. ZYX\'THARA...','CHECKING FOR SECRET CLASSIFICATION...','STAMPING CLEARANCE LEVEL...','REPORT COMPILED. PROGNOSIS: BLEAK.'];
+// ══════════════════════════════════════
+// LOADING STEPS
+// ══════════════════════════════════════
+const LOAD_STEPS=[
+  'Locating your wallet on Etherscan...',
+  'Counting your losses...',
+  'Consulting the blockchain coroner...',
+  'Carbon-dating your NFTs...',
+  'Notifying your bags...',
+  'Carving the tombstone...',
+  'Summoning the zombies...',
+  'Filing death certificate with BBD...',
+  'Rest in peace.',
+];
 
-async function beginEvaluation(){
+// ══════════════════════════════════════
+// MAIN BURIAL FLOW
+// ══════════════════════════════════════
+async function beginBurial(){
   const raw=document.getElementById('handle-inp').value.trim().replace(/^@/,'');
   if(!raw)return;
-
-  // Lock UI
-  document.getElementById('btn-go').disabled=true;
-  document.getElementById('results-area').style.display='none';
+  document.getElementById('btn-bury').disabled=true;
+  document.getElementById('cert-section').style.display='none';
   document.getElementById('loading').style.display='block';
 
-  // Reset terminal
-  const term=document.getElementById('terminal');
-  term.innerHTML='';
-  const prog=document.getElementById('prog');
-  prog.style.width='0%';
-
-  for(let i=0;i<TLINES.length;i++){
-    await new Promise(res=>setTimeout(res,200));
-    const ln=document.createElement('div');
-    ln.className='t-line'+(i===TLINES.length-1?' done':'');
-    ln.textContent=TLINES[i];
-    term.appendChild(ln);
-    prog.style.width=Math.round((i+1)/TLINES.length*100)+'%';
+  for(let i=0;i<LOAD_STEPS.length;i++){
+    document.getElementById('load-step').textContent=LOAD_STEPS[i];
+    await new Promise(r=>setTimeout(r,280));
   }
-  await new Promise(res=>setTimeout(res,300));
 
   const m=derive(raw);
 
-  // Update leaderboard in DB
-  const idx=DB.leaderboard.findIndex(r=>r.handle.toLowerCase()===raw.toLowerCase());
-  const entry={handle:raw,species:m.species,planet:m.planet,threat:m.threat,isSecret:m.isSecret};
-  if(idx>=0)DB.leaderboard[idx]=entry;
-  else DB.leaderboard.push(entry);
-  await saveDB();
-  renderHUD();
+  // Save to Supabase (fire and forget)
+  saveToSupabase(m);
 
-  // Hide loading, populate cert, show results
   document.getElementById('loading').style.display='none';
   populateCert(m);
-  window._lastM=m;
+  document.getElementById('cert-section').style.display='block';
+  document.getElementById('btn-bury').disabled=false;
+  document.getElementById('cert-section').scrollIntoView({behavior:'smooth',block:'start'});
 
-  // Show results and switch to cert tab
-  document.getElementById('results-area').style.display='block';
-  switchTab('cert');
-
-  // Re-enable button
-  document.getElementById('btn-go').disabled=false;
-
-  // Scroll to results
-  document.getElementById('results-area').scrollIntoView({behavior:'smooth',block:'start'});
-
-  // Secret toast
-  if(m.isSecret){
-    const t=document.getElementById('secret-toast');
-    t.textContent='🔮 RARE DISCOVERY: SECRET SPECIES — '+m.species;
-    t.classList.add('show');
-    setTimeout(()=>t.classList.remove('show'),5000);
-  }
+  // Refresh leaderboard
+  setTimeout(loadLeaderboard,1500);
 }
 
 function populateCert(m){
-  document.getElementById('c-caseno').innerHTML=`CASE: ${m.caseNo}<br>DATE: ${new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}<br>STATUS: ACTIVE`;
-  document.getElementById('c-handle').textContent='@'+m.handle.toUpperCase();
-  document.getElementById('c-species').textContent=m.species;
-  document.getElementById('c-secret-badge').innerHTML=m.isSecret?`<div class="cert-secret-badge">${m.secretBadge}</div>`:'';
-  const tc=THREAT_COLORS[m.threat]||'#888';
-  document.getElementById('c-threat').innerHTML=`<span style="color:${tc};text-shadow:0 0 8px ${tc}">${m.threat}</span>`;
-  document.getElementById('c-clearance').textContent='CLEARANCE LEVEL '+m.classLvl+' REQUIRED';
-  document.getElementById('c-planet').textContent=m.planet;
-  document.getElementById('c-quadrant').textContent=m.quadrant;
-  document.getElementById('c-atmo').textContent=m.atmo;
-  document.getElementById('c-blood').textContent=m.blood;
-  document.getElementById('c-path').textContent=m.path;
-  document.getElementById('c-doctor').textContent=m.doctor;
-  document.getElementById('c-sig').textContent=m.doctor;
+  const dateStr=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
 
-  document.getElementById('c-vitals').innerHTML=m.vitals.map((v,i)=>`
-    <div class="vital-row">
-      <span class="vital-label">${v.label}</span>
-      <div class="vital-track"><div class="vital-fill" style="width:${v.val}%;background:${VITAL_COLORS[i]||'#888'}"></div></div>
-      <span class="vital-val">${v.val}</span>
-    </div>`).join('');
+  document.getElementById('c-meta').innerHTML=`CASE: ${m.caseNo}<br>DATE OF DEATH: ${dateStr}<br>STATUS: CONFIRMED REKT`;
+  document.getElementById('c-cert-handle').textContent='@'+m.handle;
+  document.getElementById('c-cause').textContent=m.cause;
+  document.getElementById('c-time').textContent=m.time;
+  document.getElementById('c-holding').textContent=m.holding;
+  document.getElementById('c-nft').textContent=m.nft;
+  document.getElementById('c-words').textContent=m.words;
+  document.getElementById('c-wallet').textContent=m.wallet;
+  document.getElementById('c-epitaph-text').textContent=m.epitaph;
+  document.getElementById('c-testimony').textContent=m.testimony;
 
-  document.getElementById('c-diagnoses').innerHTML=m.diagnoses.map(d=>`
-    <div class="diag-item">
-      <span class="diag-code">${d.code}</span>
-      <span class="diag-name">${d.name}</span>
-    </div>`).join('');
+  // Pain score
+  document.getElementById('c-score-num').textContent=m.score;
+  document.getElementById('c-score-fill').style.width=m.score+'%';
+  document.getElementById('c-score-val').textContent=m.score+'/100';
 
-  document.getElementById('c-transmission').textContent=m.transmission;
-  document.getElementById('c-rx').innerHTML=m.rx.map(r=>`<li>${r}</li>`).join('');
+  // Tombstone SVG text
+  const displayHandle='@'+m.handle.substring(0,10);
+  document.getElementById('c-stone-handle').textContent=displayHandle;
+  document.getElementById('c-stone-dates').textContent=m.birthYear+' — '+m.deathYear;
+  document.getElementById('c-stone-line1').textContent='Cause:';
+  document.getElementById('c-stone-line2').textContent=m.cause.split(' ').slice(0,3).join(' ');
+  document.getElementById('c-stone-line3').textContent=m.cause.split(' ').slice(3,6).join(' ');
+  document.getElementById('c-stone-rip').textContent='R.I.P.';
 
-  // Stamp
-  const s2=document.getElementById('c-stamp2');
-  const s2t=document.getElementById('c-stamp2-txt');
-  if(m.isSecret){
-    s2.className='cert-stamp secret';
-    s2t.className='stamp-txt secret';
-    s2t.textContent='SECRET\nSPECIES\nDETECTED\n🔮';
-    s2t.innerHTML='SECRET<br>SPECIES<br>DETECTED<br>🔮';
-  } else {
-    s2.className='cert-stamp blue';
-    s2t.className='stamp-txt blue';
-    s2t.innerHTML='CLASSIFIED<br>LEVEL '+m.classLvl+'<br>CLEARANCE<br>REQ.';
-  }
+  window._lastM=m;
+}
+
+function showToast(msg){
+  const t=document.getElementById('secret-toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),4500);
 }
 
 async function downloadCert(){
-  const el=document.getElementById('certificate');
   try{
-    const canvas=await html2canvas(el,{scale:2,useCORS:true,backgroundColor:'#f5f0e2',logging:false});
-    const link=document.createElement('a');
-    link.download='IGPB_'+(window._lastM?.handle||'subject').toUpperCase()+'_CLASSIFIED.png';
-    link.href=canvas.toDataURL('image/png');
-    link.click();
-  }catch(e){alert('Please screenshot manually (Cmd+Shift+4 on Mac / PrtScrn on Windows)')}
+    const canvas=await html2canvas(document.getElementById('certificate'),{scale:2,backgroundColor:'#f5f0e2',logging:false,useCORS:true});
+    const a=document.createElement('a');
+    a.download='DEATH_CERT_'+(window._lastM?.handle||'degen').toUpperCase()+'.png';
+    a.href=canvas.toDataURL('image/png');a.click();
+  }catch(e){alert('Screenshot manually — Cmd+Shift+4 or PrtScrn')}
 }
 
 function shareOnX(){
   const m=window._lastM||{};
-  const secret=m.isSecret?'\n🔮 RARE SECRET SPECIES DISCOVERED':'';
-  const txt=`just got my intergalactic psychiatric evaluation 👽🛸\n\n@${m.handle||'me'} — threat level: ${m.threat||'?'}\nplanet of origin: ${m.planet||'?'}\ndiagnosis: ${(m.diagnoses?.[0]?.name||'').split('—')[0].trim()}${secret}\n\nget yours 👇\n\nhttps://intergalactic-lemon.vercel.app/`;
+  const txt=`just got my official crypto death certificate ☠️\n\n@${m.handle} — Pain Score: ${m.score}/100\nCause of death: ${m.cause}\nLast holding: ${m.holding}\n\nRIP to my bags 💀`;
   window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(txt),'_blank');
 }
 
@@ -750,11 +869,18 @@ function fill(h){document.getElementById('handle-inp').value=h;document.getEleme
 
 function resetAll(){
   document.getElementById('handle-inp').value='';
-  document.getElementById('results-area').style.display='none';
+  document.getElementById('cert-section').style.display='none';
   document.getElementById('handle-inp').focus();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
 document.getElementById('handle-inp').addEventListener('keydown',e=>{if(e.key==='Enter')beginEvaluation()});
-loadDB();
+// Fix typo in event listener
+document.getElementById('handle-inp').addEventListener('keydown',e=>{if(e.key==='Enter')beginBurial()});
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+buildCemetery();
+loadLeaderboard();
 </script>
