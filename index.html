@@ -129,7 +129,7 @@ body{background:#0a0a0a;font-family:'Special Elite',cursive;color:var(--bone);mi
 /* LEFT: tombstone visual */
 .cert-stone-col{display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
 .cert-stone-svg{width:160px;height:200px;filter:drop-shadow(2px 4px 8px rgba(0,0,0,0.4))}
-.cert-handle-name{font-family:'UnifrakturMaguntia',cursive;font-size:1.3rem;color:#8b0000;text-align:center;margin-top:0.25rem;line-height:1.2}
+.cert-handle-name{font-family:'UnifrakturMaguntia',cursive;font-size:3rem;color:#8b0000;text-align:center;margin-top:3rem;line-height:1.2}
 
 /* RIGHT: data */
 .cert-data-col{}
@@ -252,10 +252,10 @@ body{background:#0a0a0a;font-family:'Special Elite',cursive;color:var(--bone);mi
       <button class="btn-bury" id="btn-bury" onclick="beginBurial()">BURY ME ☠</button>
     </div>
     <div class="eg-row">Try:
-      <button class="eg-btn" onclick="fill('cryptopunk')">@cryptopunk</button>
-      <button class="eg-btn" onclick="fill('degod')">@degod</button>
+      <button class="eg-btn" onclick="fill('elonmusk')">@elonmusk</button>
+      <button class="eg-btn" onclick="fill('frankdegods')">@frankdegods</button>
       <button class="eg-btn" onclick="fill('solana')">@solana</button>
-      <button class="eg-btn" onclick="fill('justbluish')">@justbluish</button>
+      <button class="eg-btn" onclick="fill('justbluishxd')">@justbluishxd</button>
     </div>
   </div>
 
@@ -329,7 +329,7 @@ body{background:#0a0a0a;font-family:'Special Elite',cursive;color:var(--bone);mi
                 <div class="cert-field"><div class="cert-field-lbl">Wallet Status</div><div class="cert-field-val" id="c-wallet"></div></div>
               </div>
               <div class="cert-score-wrap">
-                <div class="cert-score-label">☠ Pain Score (Harshness of Death) — <span id="c-score-num"></span>/100</div>
+                <div class="cert-score-label">☠ Pain Score (Harshness of Death) — <span id="c-score-num"></span>/100000</div>
                 <div class="cert-score-bar"><div class="cert-score-fill" id="c-score-fill"></div><div class="cert-score-val" id="c-score-val"></div></div>
               </div>
               <div class="cert-section-head">Witness Testimony</div>
@@ -749,7 +749,7 @@ function derive(handle){
   const r=mkRng(h),r2=mkRng(h,'b'),r3=mkRng(h,'c'),r4=mkRng(h,'d'),r5=mkRng(h,'e'),r6=mkRng(h,'f');
   const r7=mkRng(h,'g'),r8=mkRng(h,'h'),r9=mkRng(h,'i'),r10=mkRng(h,'j');
 
-  const score=between(12,100,mkRng(h,'score'));
+  const score=between(1,100000,mkRng(h,'score'));
   const wordplay=handleWordplay(handle);
   const cause=pick(CAUSES,r);
   const holding=pick(HOLDINGS,r2);
@@ -829,8 +829,9 @@ function populateCert(m){
 
   // Pain score
   document.getElementById('c-score-num').textContent=m.score;
-  document.getElementById('c-score-fill').style.width=m.score+'%';
-  document.getElementById('c-score-val').textContent=m.score+'/100';
+ const percent = Math.min(100, (m.score / 100000) * 100);
+document.getElementById('c-score-fill').style.width = percent + '%';
+  document.getElementById('c-score-val').textContent=m.score+'/100000';
 
   // Tombstone SVG text
   const displayHandle='@'+m.handle.substring(0,10);
